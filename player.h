@@ -1,5 +1,4 @@
 #include <vector>
-#include "player.h"
 #include "ability.h"
 #include "link.h"
 #include "direction.h"
