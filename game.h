@@ -9,7 +9,7 @@ class Game {
 
     public:
         Game(Player* p1, Player* p2);
-        ~Game();
+        ~Game(); // void? test
         
         void start();
         void processCommand(const string& cmd);
