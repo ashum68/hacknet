@@ -3,12 +3,7 @@
 using namespace std;
 
 class Ability {
-    bool used = false;
-    Player* owner;
-
     public:
-        virtual ~Ability() = default;
-        virtual void use(const vector<int>& params) = 0;
+        virtual void use(Cell* c1, Cell* c2) = 0;
         virtual string getName() const = 0;
-    
 };

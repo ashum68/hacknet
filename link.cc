@@ -1,7 +1,7 @@
 #include "link.h"
 
 bool Link::move(Direction dir) {
-    // Implementation
+    
 }
 
 bool Link::battle(Link* other) {

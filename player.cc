@@ -1,29 +1,41 @@
 #include "player.h"
 
 void Player::addLink(Link* link) {
-    // Implementation here
+    links.push_back(link)
 }
 
 void Player::addAbility(Ability* ability) {
-    // Implementation here
+    abilities.push_back(ability);
 }
 
 bool Player::useAbility(int id, const vector<int>& params) {
-    // Implementation here
+    if (id < 1 || id > abilities.size()) return false;
+    abilities[id - 1]->use(params);
+    return true;
 }
 
 bool Player::moveLink(char linkId, Direction dir) {
-    // Implementation here
+    for (auto link : links) {
+        if (link->getId() == linkId) {
+            link->move(dir);
+            return true;
+        }
+    }
+    return false;
 }
 
 int Player::getDownloadedData() const {
-    // Implementation here
+    return downloadedData;
+}
+
+void Player::setDownloadedData(int newDownloaded) const {
+    downloadedData = newDownloaded;
 }
 
 int Player::getDownloadedViruses() const {
-    // Implementation here
+    return downloadedViruses;
 }
 
 bool Player::hasWon() const {
-    // Implementation here
+    return downloadedData >= 4;
 }

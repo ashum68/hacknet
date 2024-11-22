@@ -5,7 +5,8 @@ class Link {
     char id;
     int strength;
     Player* owner;
-    bool revealed, boosted;
+    int row, col;
+    bool revealed, boosted, downloaded;
 
     public:
         virtual ~Link() = default;
@@ -15,6 +16,8 @@ class Link {
         bool battle(Link* other);
         void reveal();
         char getId() const;
+        bool getDownloaded() const;
+        void setDownloaded(int newDownloaded);
         int getStrength() const;
         Player* getOwner() const;
 };

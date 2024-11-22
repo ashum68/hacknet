@@ -19,7 +19,9 @@ class Player {
         bool moveLink(char linkId, Direction dir);
         
         int getDownloadedData() const;
+        void setDownloadedData() const;
         int getDownloadedViruses() const;
+        void setDownloadedViruses() const;
         bool hasWon() const;
     
 };
