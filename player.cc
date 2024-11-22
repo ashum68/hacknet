@@ -1,7 +1,10 @@
 #include "player.h"
 
+Player::Player(const string& name)
+    : name{name}, downloadedData{0}, downloadedViruses{0} {}
+
 void Player::addLink(Link* link) {
-    links.push_back(link)
+    links.push_back(link);
 }
 
 void Player::addAbility(Ability* ability) {
@@ -14,7 +17,7 @@ bool Player::useAbility(int id, const vector<int>& params) {
     return true;
 }
 
-bool Player::moveLink(char linkId, Direction dir) {
+bool Player::moveLink(char linkId, Direction dir) { // check if directions valid?
     for (auto link : links) {
         if (link->getId() == linkId) {
             link->move(dir);
@@ -24,11 +27,15 @@ bool Player::moveLink(char linkId, Direction dir) {
     return false;
 }
 
+string Player::getName() const {
+    return name;
+}
+
 int Player::getDownloadedData() const {
     return downloadedData;
 }
 
-void Player::setDownloadedData(int newDownloaded) const {
+void Player::setDownloadedData(int newDownloaded) {
     downloadedData = newDownloaded;
 }
 
@@ -36,6 +43,14 @@ int Player::getDownloadedViruses() const {
     return downloadedViruses;
 }
 
+void Player::setDownloadedViruses(int newDownloaded) {
+    downloadedViruses = newDownloaded;
+}
+
 bool Player::hasWon() const {
     return downloadedData >= 4;
+}
+
+bool Player::hasLost() const {
+    return downloadedViruses >= 4;
 }

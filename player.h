@@ -18,10 +18,12 @@ class Player {
         bool useAbility(int id, const vector<int>& params);
         bool moveLink(char linkId, Direction dir);
         
+        string getName() const;
         int getDownloadedData() const;
-        void setDownloadedData() const;
+        void setDownloadedData(int newDownloaded);
         int getDownloadedViruses() const;
-        void setDownloadedViruses() const;
+        void setDownloadedViruses(int newDownloaded);
         bool hasWon() const;
+        bool hasLost() const;
     
 };

@@ -6,7 +6,7 @@ class Link {
     int strength;
     Player* owner;
     int row, col;
-    bool revealed, boosted, downloaded;
+    bool revealed, boosted, downloaded, isVirus;
 
     public:
         virtual ~Link() = default;
