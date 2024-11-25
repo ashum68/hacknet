@@ -44,6 +44,14 @@ char Link::getId() const {
     return id;
 }
 
+bool Link::getDownloaded() const {
+    return downloaded;
+}
+
+void setDownloaded(int newDownloaded) {
+    // implement
+}
+
 int Link::getStrength() const {
     return strength;
 }
