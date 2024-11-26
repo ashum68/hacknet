@@ -3,8 +3,8 @@
 using namespace std;
 
 class Ability {
-    char id;
+    bool isUsed;
     public:
-        virtual void use(Cell* c1, Cell* c2) = 0;
+        virtual void use(Cell* c);
         virtual string getName() const = 0;
 };

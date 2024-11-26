@@ -1,5 +1,8 @@
 #include "player.h"
 
+const int WINNING_DATA = 4;
+const int LOSING_VIRUSES = 4;
+
 Player::Player(const id& id)
     : id{id}, downloadedData{0}, downloadedViruses{0}, usedAbilityThisTurn{false} {}
 
@@ -12,20 +15,36 @@ void Player::addAbility(Ability* ability) {
 }
 
 bool Player::useAbility(Ability* ability, Cell* c) {
-    // if (id < 1 || id > abilities.size()) return false;
-    // abilities[id - 1]->use(params);
-    // return true;
-    
+    // ability itself will check if it used properly
+    if (!ability || !c) {
+        return false;
+    }
+
+    return ability->use(c);
 }
 
-bool Player::moveLink(char linkId, Direction dir) { // check if directions valid?
-    for (auto link : links) {
-        if (link->getId() == linkId) {
-            link->move(dir);
-            return true;
-        }
+bool Player::downloadLink(Link* link) {
+    if (!link) {
+        return false;
     }
-    return false;
+
+    link->setDownloaded(true);
+
+    if (link->isVirus()) {
+        setDownloadedViruses(getDownloadedViruses() + 1);
+    } else {
+        setDownloadedData(getDownloadedData() + 1);
+    }
+
+    return true;
+}
+
+bool Player::hasWon() const {
+    return getDownloadedData() >= WINNING_DATA;
+}
+
+bool Player::hasLost() const {
+    return getDownloadedViruses() >= LOSING_VIRUSES;
 }
 
 string Player::getName() const {
@@ -46,12 +65,4 @@ int Player::getDownloadedViruses() const {
 
 void Player::setDownloadedViruses(int newDownloaded) {
     downloadedViruses = newDownloaded;
-}
-
-bool Player::hasWon() const {
-    return downloadedData >= 4;
-}
-
-bool Player::hasLost() const {
-    return downloadedViruses >= 4;
 }
