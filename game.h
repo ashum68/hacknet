@@ -9,7 +9,7 @@ class Game {
     Board* board;
 
     public:
-        Game(Player* p1, Player* p2);
+        Game(vector<Player*> players, Board* board);
         ~Game(); // void? test
         
         void start();
