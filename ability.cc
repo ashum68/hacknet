@@ -1,2 +1,2 @@
-// Pure virtual functi
+// Pure virtual functions
 

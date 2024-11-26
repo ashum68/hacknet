@@ -1,10 +1,14 @@
 #include "firewall.h"
 using namespace std;
 
-void FireWall::use(const vector<int>& params) {
-    /* Impl */
+
+
+bool Firewall::use(Cell *c) {
+    Link *link = c->getLink();
+    if (!link) return false;
+    char playerId = link->getPlayerId();
+    if (!playerId) return false;
+
 }
 
-string FireWall::getName() const {
-    return "Fire Wall";
-}
+string FireWall::getName() const { return "Firewall"; }

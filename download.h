@@ -4,6 +4,6 @@ using namespace std;
 
 class Download : public Ability {
     public:
-        void use(const vector<int>& params) override;
+        void use(Cell *c) override;
         string getName() const override;
 };
