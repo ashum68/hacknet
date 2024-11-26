@@ -14,6 +14,14 @@ void Link::reveal() {
     revealed = true;
 } 
 
+int Link::getRow() const {
+    return row;
+}
+
+int Link::getCol() const {
+    return col;
+}
+
 char Link::getId() const {
     return id;
 }

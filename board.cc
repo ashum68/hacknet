@@ -1,25 +1,40 @@
 #include "board.h"
+#include "direction.h"
 
 bool Board::moveLink(Link* link, Direction dir) {
-    // Impl here
+    int row = link->getRow();
+    int col = link->getCol();
+    int newRow = row;
+    int newCol = col;
+    switch (dir) {
+        case Direction::UP:
+            newRow--;
+            break;
+        case Direction::DOWN:
+            newRow++;
+            break;
+        case Direction::LEFT:
+            newCol--;
+            break;
+        case Direction::RIGHT:
+            newCol++;
+            break;
+    }
+    if (newRow < 0 || newRow >= grid.size() || newCol < 0 || newCol >= grid[0].size()) {
+        return false;
+    }
+    // no change this to be just setting the link in it to the new link
+    Cell* newCell = grid[newRow][newCol];
+    if (newCell->canOccupy(link)) {
+        grid[row][col]->emptyCell();
+        newCell->setLink(link);
+        link->setRow(newRow);
+        link->setCol(newCol);
+        return true;
+    }
+    return false;
 }
 
 Cell* Board::getCell(int row, int col) const {
-    // Impl here
-}
-
-void Board::initializeBoard() {
-    // Impl here
-}
-
-void Board::attach(Observer* obs) {
-    // Impl here
-}
-
-void Board::detach(Observer* obs) {
-    // Impl here
-}
-
-void Board::notifyObservers() {
-    // Impl here
+    return grid[row][col];
 }

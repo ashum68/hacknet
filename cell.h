@@ -10,6 +10,8 @@ class Cell {
         ~Cell() { delete link };
         bool canOccupy(Link* link) const;
         void setLink(Link* Link);
+        int getRow() const;
+        int getCol() const;
         Link* getLink();
         // emptyCell() Link* ??
     
