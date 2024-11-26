@@ -1,7 +1,7 @@
 #include "player.h"
 
-Player::Player(const string& name)
-    : name{name}, downloadedData{0}, downloadedViruses{0} {}
+Player::Player(const id& id)
+    : id{id}, downloadedData{0}, downloadedViruses{0}, usedAbilityThisTurn{false} {}
 
 void Player::addLink(Link* link) {
     links.push_back(link);
@@ -11,10 +11,11 @@ void Player::addAbility(Ability* ability) {
     abilities.push_back(ability);
 }
 
-bool Player::useAbility(int id, const vector<int>& params) {
-    if (id < 1 || id > abilities.size()) return false;
-    abilities[id - 1]->use(params);
-    return true;
+bool Player::useAbility(Ability* ability, Cell* c) {
+    // if (id < 1 || id > abilities.size()) return false;
+    // abilities[id - 1]->use(params);
+    // return true;
+    
 }
 
 bool Player::moveLink(char linkId, Direction dir) { // check if directions valid?
