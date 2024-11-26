@@ -12,6 +12,7 @@
         "string_view": "cpp",
         "unordered_map": "cpp",
         "vector": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "typeinfo": "cpp"
     }
 }

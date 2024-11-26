@@ -6,11 +6,11 @@
 #include "window.h"
 
 class GraphicsObserver : public Observer {
-    Board* board;
+    Game* game;
     Xwindow w;
 
     public:
-        GraphicsObserver(Board* board) : board(board) {};
+        GraphicsObserver(Board* board) : board(board) {}; // modify
         ~GraphicsObserver() override;
         void notify() override;
 };

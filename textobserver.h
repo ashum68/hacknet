@@ -4,10 +4,9 @@
 #define _TEXT_OBSERVER_H_
 
 class TextObserver : public Observer {
-    Board* board;
-
+    Game* game;
     public:
-        TextObserver(Board* board) : board(board) {}
+        TextObserver(Board* board) : board(board) {} // modify
         void notify() override;
 };
 
