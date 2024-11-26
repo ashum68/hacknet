@@ -1,4 +1,5 @@
-#include <vector>
+#ifndef FIREWALL_H
+#define FIREWALL_H
 #include "ability.h"
 using namespace std;
 
@@ -7,3 +8,5 @@ class Firewall : public Ability {
         void use(Cell *c) override;
         string getName() const override;
 };
+
+#endif
