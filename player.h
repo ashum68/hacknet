@@ -12,7 +12,7 @@ class Player {
     bool usedAbilityThisTurn;
 
     public:
-        Player(const id& id);
+        Player(const char &id);
         
         void addLink(Link* link);
         void addAbility(Ability* ability);
