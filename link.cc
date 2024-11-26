@@ -1,5 +1,15 @@
 #include "link.h"
 
+bool Link::battle(Link* other) {
+    if (strength >= other->getStrength()) {
+        other->setDownloaded();
+        return true;
+    } else if (strength < other->getStrength()) {
+        downloaded = true;
+        return false;
+    }
+}
+
 void Link::reveal() {
     revealed = true;
 } 

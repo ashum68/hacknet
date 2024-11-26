@@ -6,7 +6,8 @@ class Cell {
     bool FirewallOn1, FirewallOn2, hasServerPort, isBlocked;
 
     public:
-        ~Cell();
+        Cell(Link* link, int row, int col);
+        ~Cell() { delete link };
         bool canOccupy(Link* link) const;
         void setLink(Link* Link);
         Link* getLink();
