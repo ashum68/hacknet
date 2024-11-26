@@ -14,3 +14,9 @@ void setLink(Link* Link) {
 Link* getLink() {
     return link;
 }
+
+void emptyCell() {
+    Link* temp = link;
+    link = nullptr;
+    delete temp;
+}

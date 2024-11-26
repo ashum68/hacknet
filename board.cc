@@ -6,6 +6,7 @@ bool Board::moveLink(Link* link, Direction dir) {
     int col = link->getCol();
     int newRow = row;
     int newCol = col;
+    
     switch (dir) {
         case Direction::UP:
             newRow--;
@@ -20,10 +21,11 @@ bool Board::moveLink(Link* link, Direction dir) {
             newCol++;
             break;
     }
+
     if (newRow < 0 || newRow >= grid.size() || newCol < 0 || newCol >= grid[0].size()) {
         return false;
     }
-    // no change this to be just setting the link in it to the new link
+
     Cell* newCell = grid[newRow][newCol];
     if (newCell->canOccupy(link)) {
         grid[row][col]->emptyCell();

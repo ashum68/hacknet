@@ -22,6 +22,14 @@ int Link::getCol() const {
     return col;
 }
 
+int Link::setRow(int r) {
+    row = r;
+}
+
+int Link::setCol(int c) {
+    col = c;
+}
+
 char Link::getId() const {
     return id;
 }

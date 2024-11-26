@@ -13,6 +13,6 @@ class Cell {
         int getRow() const;
         int getCol() const;
         Link* getLink();
-        // emptyCell() Link* ??
+        void emptyCell();
     
 };
