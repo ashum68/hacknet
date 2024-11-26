@@ -3,7 +3,8 @@
 using namsepace std;
 
 class Game {
-    Player* player1, player2;
+    // Player* player1, player2;
+    vector<Player*> player;
     int currplayer;
     Board* board;
 
@@ -14,6 +15,6 @@ class Game {
         void start();
         void processCommand(const string& cmd);
         bool isGameOver() const;
-        void switchTurn();
+        void switchPlayer();
 
 };

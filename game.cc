@@ -12,7 +12,7 @@ bool Game::isGameOver() const {
     // Implementation here
 }
 
-void Game::switchTurn() {
+void Game::switchPlayer() {
     // Implementation here
 }
 
