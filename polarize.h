@@ -1,12 +1,12 @@
 #ifndef POLARIZE_H
 #define POLARIZE_H
-#include <vector>
 #include "ability.h"
 using namespace std;
 
 class Polarize : public Ability {
     public:
-        void use(const vector<int>& params) override;
+        Polarize(char playerId);
+        void use(Cell *c) override;
         string getName() const override;
 };
 

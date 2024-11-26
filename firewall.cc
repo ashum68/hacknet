@@ -1,7 +1,7 @@
 #include "firewall.h"
 using namespace std;
 
-
+Firewall::Firewall(char playerId) : Ability{playerId} {}
 
 bool Firewall::use(Cell *c) {
     Link *link = c->getLink();

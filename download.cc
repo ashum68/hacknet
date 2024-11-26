@@ -1,6 +1,8 @@
 #include "download.h"
 using namespace std;
 
+Download::Download(char playerId) : Ability{playerId} {}
+
 void Download::use(Cell *c) {
     Link *link = c->getLink();
     if (!link) return false;
