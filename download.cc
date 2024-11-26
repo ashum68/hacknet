@@ -1,10 +1,11 @@
 #include "download.h"
 using namespace std;
 
-void Download::use(Cell* c1, Cell* c2) {
-    Link *link = c1->getLink();
+void Download::use(Cell *c) {
+    Link *link = c->getLink();
+    if (!link) return false;
     bool isVirus = link->isVirus();
-    ln->setDownloaded(true);
+    ln->setDownloaded();
     Player* player = link->getOwner();
 
     oldData = player->getDownloadedData();
