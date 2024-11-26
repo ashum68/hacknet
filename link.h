@@ -10,6 +10,7 @@ class Link {
     bool revealed, boosted, downloaded, isVirus;
 
 public:
+    Link(char id, char playerId, int strength, bool revealed = false, bool boosted = false, bool downloaded = false, bool isVirus);
     bool battle(Link* other);
     void reveal();
 
@@ -17,6 +18,8 @@ public:
     bool getDownloaded() const;
     void setDownloaded();
     void setBoosted();
+    void setRow();
+    void setCol();
     bool isBoosted() const;
     int getStrength() const;
     int getRow() const;
