@@ -19,10 +19,10 @@ public:
     void setBoosted();
     bool isBoosted() const;
     int getStrength() const;
-    getRow() const;
-    getCol() const;
-    setRow(int r);
-    setCol(int c);
+    int getRow() const;
+    int getCol() const;
+    int setRow(int r);
+    int setCol(int c);
     char getOwner() const;
 };
 
