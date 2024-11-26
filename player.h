@@ -17,7 +17,7 @@ class Player {
         void addLink(Link* link);
         void addAbility(Ability* ability);
         bool useAbility(Ability* ability, Cell* c1, Cell* c2);
-        bool downloadLink(Link* link);
+        bool downloadLink(Link* link); // 
         bool hasWon() const;
         bool hasLost() const;
         
