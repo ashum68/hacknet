@@ -12,11 +12,11 @@ class Player {
     bool usedAbilityThisTurn;
 
     public:
-        Player(const string& name);
+        Player(const id& id);
         
         void addLink(Link* link);
         void addAbility(Ability* ability);
-        bool useAbility(Ability* ability, Cell* c1, Cell* c2);
+        bool useAbility(Ability* ability, Cell* c);
         bool downloadLink(Link* link); // 
         bool hasWon() const;
         bool hasLost() const;
