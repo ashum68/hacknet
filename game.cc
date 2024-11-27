@@ -6,6 +6,14 @@
 #include "player.h"
 #include "board.h"
 #include "ability.h"
+#include "download.h"
+#include "linkboost.h"
+#include "firewall.h"
+#include "scan.h"
+#include "polarize.h"
+#include "justsayno.h"
+#include "roadworkahead.h"
+#include "roulette.h"
 
 using namespace std;
 

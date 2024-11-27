@@ -18,12 +18,11 @@ public:
     bool getDownloaded() const;
     void setDownloaded();
     void setBoosted();
-    void setRow();
-    void setCol();
     bool isBoosted() const;
     int getStrength() const;
     int getRow() const;
     int getCol() const;
+    bool getIsVirus() const;
     int setRow(int r);
     int setCol(int c);
     char getOwner() const;

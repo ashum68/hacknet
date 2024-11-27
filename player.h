@@ -21,7 +21,7 @@ public:
     void addLink(unique_ptr<Link> link);
     void addAbility(unique_ptr<Ability> ability);
     bool useAbility(int abilityIndex, Cell* c);
-    bool downloadLink(Link* link);
+    bool downloadLink(int linkIndex);
     bool hasWon() const;
     bool hasLost() const;
     

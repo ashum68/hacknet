@@ -6,7 +6,7 @@ using namespace std;
 class Roulette : public Ability {
     public:
         Roulette(char playerId);
-        void use(Cell *c) override;
+        bool use(Cell *c) override;
         string getName() const override;
 };
 

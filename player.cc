@@ -27,7 +27,7 @@ bool Player::useAbility(int abilityIndex, Cell* c) {
 
     bool result = ability->use(c);
     if (result) {
-        ability->setUsed(true);
+        ability->setUsed();
     }
     return result;
 }
@@ -38,9 +38,9 @@ bool Player::downloadLink(int linkIndex) {
     }
 
     auto& link = links[linkIndex];
-    link->setDownloaded(true);
+    link->setDownloaded();
 
-    if (link->isVirus()) {
+    if (link->getIsVirus()) {
         downloadedViruses++;
     } else {
         downloadedData++;

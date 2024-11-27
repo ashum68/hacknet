@@ -11,6 +11,7 @@ class Ability {
         Ability(char playerId);
         bool getUsed() const;
         void setUsed();
+        void setbool();
         virtual bool use(Cell* c);
         virtual string getName() const = 0;
 };
