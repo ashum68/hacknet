@@ -27,8 +27,8 @@ class Cell {
         void setBlocked(bool blocked);
         bool isFirewallOn1() const;
         bool isFirewallOn2() const;
-        void setFirewall1(bool status);
-        void setFirewall2(bool status);
+        void setFirewall1();
+        void setFirewall2();
         bool getHasServerPort() const;
         void setHasServerPort(bool status);
     

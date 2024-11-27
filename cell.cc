@@ -48,13 +48,13 @@ bool Cell::isFirewallOn2() const {
 }
 
 // Activate or deactivate Firewall 1
-void Cell::setFirewall1(bool status) {
-    firewallOn1 = status;
+void Cell::setFirewall1() {
+    firewallOn1 = true;
 }
 
 // Activate or deactivate Firewall 2
-void Cell::setFirewall2(bool status) {
-    firewallOn2 = status;
+void Cell::setFirewall2() {
+    firewallOn2 = true;
 }
 
 // Check if the cell has a server port
