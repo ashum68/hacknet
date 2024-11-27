@@ -5,12 +5,12 @@
 #include "direction.h"
 
 class Link {
-    char id, playerId;
-    int strength, row, col;
+    char id;
+    int playerId, strength, row, col;
     bool revealed, boosted, downloaded, isVirus;
 
 public:
-    Link(char id, char playerId, int strength, bool revealed = false, bool boosted = false, bool downloaded = false, bool isVirus);
+    Link(char id, int playerId, int strength, bool revealed = false, bool boosted = false, bool downloaded = false, bool isVirus);
     bool battle(Link* other);
     void reveal();
 

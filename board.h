@@ -10,7 +10,7 @@ class Board {
     vector<Observer*> observers;
 
     public:
-        
+        void initializeBoard(vector<unique_ptr<Player>> players);
         bool moveLink(Link* link, Direction dir);
         Cell* getCell(int row, int col) const;
     
