@@ -2,6 +2,7 @@
 #include "cell.h"
 #include "observer.h"
 #include "direction.h"
+#include "link.h"
 using namespace std;
 
 class Board {

@@ -12,7 +12,7 @@ class Player {
     bool usedAbilityThisTurn;
 
     public:
-        Player(const char& id);
+        Player(const char &id);
         
         void addLink(Link* link);
         vector<Link*> getLinks() const;
@@ -24,8 +24,5 @@ class Player {
         
         string getName() const;
         int getDownloadedData() const;
-        void setDownloadedData(int newDownloaded);
-        int getDownloadedViruses() const;
-        void setDownloadedViruses(int newDownloaded);
-    
+  
 };

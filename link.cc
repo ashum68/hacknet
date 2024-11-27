@@ -1,5 +1,7 @@
 #include "link.h"
 
+Link(char id, char playerId, int strength, bool revealed = false, bool boosted = false, bool downloaded = false, bool isVirus) : id{id}, playerId{playerId}, strength{strength} {}
+
 bool Link::battle(Link* other) {
     if (strength >= other->getStrength()) {
         other->setDownloaded();
