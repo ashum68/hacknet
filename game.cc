@@ -6,11 +6,21 @@
 #include "player.h"
 #include "board.h"
 #include "ability.h"
+#include "download.h"
+#include "linkboost.h"
+#include "firewall.h"
+#include "scan.h"
+#include "polarize.h"
+#include "justsayno.h"
+#include "roadworkahead.h"
+#include "roulette.h"
 
 using namespace std;
 
-Game::Game(std::vector<std::unique_ptr<Player>> players, std::unique_ptr<Board> board)
-    : players(std::move(players)), currplayer(0), board(std::move(board)) {}
+Game::Game(vector<unique_ptr<Player>> players) : players(move(players)), currplayer(0) {
+    // initialize empty board, each cell is null
+    auto board = make_unique<Board>;
+}
 
 void Game::start() {
     cout << "How many players are playing, 2 or 4?" << endl;
@@ -24,15 +34,15 @@ void Game::start() {
         }
     }
 
-    players.reserve(numPlayers);
+    players.resize(numPlayers);
     
     // Initialize each player
     for (int i = 0; i < numPlayers; i++) {
-        auto player = std::make_unique<Player>(i);
+        auto player = make_unique<Player>(i);
         cout << "\nPlayer " << i + 1 << "'s turn to place links." << endl;
         
         // Track which positions are occupied
-        vector<bool> occupied(8, false);
+        vector<bool> occupied = {false, false, false, false, false, false, false, false};
         
         // Place Data links (D1-D4)
         for (int j = 1; j <= 4; j++) {
@@ -47,8 +57,8 @@ void Game::start() {
             }
             
             // Create and add Data link
-            auto newLink = std::make_unique<Link>(pos, i, j, false, false, false, false);
-            player->addLink(std::move(newLink));
+            auto newLink = make_unique<Link>(pos, i, j, false);
+            player->addLink(move(newLink));
             occupied[pos - 'a'] = true;
         }
         
@@ -65,18 +75,56 @@ void Game::start() {
             }
             
             // Create and add Virus link
-            auto newLink = std::make_unique<Link>(pos, i, j, false, false, false, true);
-            player->addLink(std::move(newLink));
+            auto newLink = make_unique<Link>(pos, i, j, true);
+            player->addLink(move(newLink));
             occupied[pos - 'a'] = true;
         }
         
         initializePlayerAbilities(player.get());
-        players.push_back(std::move(player));
+        players.push_back(move(player));
     }
     
     // Initialize board state
     board->initializeBoard(players);
     currplayer = 0;
+}
+
+void Game::run() {
+    while (!isGameOver()) {
+        auto& currentPlayer = players[currplayer];
+        cout << "\nIt's Player " << currentPlayer->getName() << "'s turn." << endl;
+        
+        // Display current board state
+        board->display(); // Assume you have a display method in Board
+        
+        // Prompt for command
+        cout << "Enter command: ";
+        std::string cmd;
+        cin >> cmd;
+        
+        // Process the command
+        processCommand(cmd);
+        
+        // Check for game over conditions inside processCommand or here
+        if (isGameOver()) {
+            break;
+        }
+        
+        // Switch to the next player
+        switchPlayer();
+    }
+    
+    // Determine and announce the winner
+    for (const auto& player : players) {
+        if (player->hasWon()) {
+            cout << "Player " << player->getName() << " has won the game!" << endl;
+            return;
+        }
+        if (player->hasLost()) {
+            cout << "Player " << player->getName() << " has lost the game!" << endl;
+            return;
+        }
+    }
 }
 
 void Game::processCommand(const string& cmd) {

@@ -2,4 +2,6 @@
 
 Ability::Ability(char playerId) : playerId{playerId} {}
 
-bool Ability::getUsed() { return isUsed; }
+bool Ability::getUsed() const { return isUsed; }
+
+void Ability::setUsed() { isUsed = true; }

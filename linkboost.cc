@@ -3,6 +3,8 @@ using namespace std;
 
 LinkBoost::LinkBoost(char playerId) : Ability{playerId} {}
 
+// link boosts can be stacked
+
 bool LinkBoost::use(Cell *c) {
     Link *link = c->getLink();
     if (!link || link->isBoosted()) return false;

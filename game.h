@@ -22,10 +22,10 @@ class Game {
         bool isValidAbilityChoice(int choice) const;
 
     public:
-        Game(vector<unique_ptr<Player>> players, unique_ptr<Board> board);
-        ~Game();
+        Game(vector<unique_ptr<Player>> players);
         
         void start();
+        void run();
         void processCommand(const string& cmd);
         bool isGameOver() const;
         void switchPlayer();

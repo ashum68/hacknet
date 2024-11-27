@@ -10,7 +10,9 @@ class Ability {
     public:
         Ability(char playerId);
         bool getUsed() const;
-        virtual void use(Cell* c);
+        void setUsed();
+        void setbool();
+        virtual bool use(Cell* c);
         virtual string getName() const = 0;
 };
 

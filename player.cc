@@ -1,71 +1,78 @@
 #include "player.h"
+using namespace std;
 
 const int WINNING_DATA = 4;
 const int LOSING_VIRUSES = 4;
 
-Player::Player(const id& id) : id{id}, downloadedData{0}, downloadedViruses{0}, usedAbilityThisTurn{false} {}
+Player::Player(int id) 
+    : id{id}, downloadedData{0}, downloadedViruses{0}, usedAbilityThisTurn{false} {}
 
-void getLijnks() const {
-    return links;
+void Player::addLink(unique_ptr<Link> link) {
+    links.push_back(move(link));
 }
 
-void Player::addLink(Link* link) {
-    links.push_back(link);
+void Player::addAbility(unique_ptr<Ability> ability) {
+    abilities.push_back(move(ability));
 }
 
-void Player::addAbility(Ability* ability) {
-    abilities.push_back(ability);
-}
-
-bool Player::useAbility(Ability* ability, Cell* c) {
-    // ability itself will check if it used properly
-    if (!ability || !c) {
+bool Player::useAbility(int abilityIndex, Cell* c) {
+    if (abilityIndex < 0 || abilityIndex >= abilities.size() || !c) {
         return false;
     }
 
-    return ability->use(c);
-}
-
-bool Player::downloadLink(Link* link) {
-    if (!link) {
+    auto& ability = abilities[abilityIndex];
+    if (ability->getUsed()) {
         return false;
     }
 
-    link->setDownloaded(true);
+    bool result = ability->use(c);
+    if (result) {
+        ability->setUsed();
+    }
+    return result;
+}
 
-    if (link->isVirus()) {
-        setDownloadedViruses(getDownloadedViruses() + 1);
+bool Player::downloadLink(int linkIndex) {
+    if (linkIndex < 0 || linkIndex >= links.size()) {
+        return false;
+    }
+
+    auto& link = links[linkIndex];
+    link->setDownloaded();
+
+    if (link->getIsVirus()) {
+        downloadedViruses++;
     } else {
-        setDownloadedData(getDownloadedData() + 1);
+        downloadedData++;
     }
 
     return true;
 }
 
 bool Player::hasWon() const {
-    return getDownloadedData() >= WINNING_DATA;
+    return downloadedData >= WINNING_DATA;
 }
 
 bool Player::hasLost() const {
-    return getDownloadedViruses() >= LOSING_VIRUSES;
+    return downloadedViruses >= LOSING_VIRUSES;
 }
 
-string Player::getName() const {
-    return name;
+std::string Player::getName() const {
+    return "Player " + to_string(id + 1);
 }
 
 int Player::getDownloadedData() const {
     return downloadedData;
 }
 
-void Player::setDownloadedData(int newDownloaded) {
-    downloadedData = newDownloaded;
-}
-
 int Player::getDownloadedViruses() const {
     return downloadedViruses;
 }
 
-void Player::setDownloadedViruses(int newDownloaded) {
-    downloadedViruses = newDownloaded;
+const std::vector<std::unique_ptr<Ability>>& Player::getAbilities() const {
+    return abilities;
+}
+
+const std::vector<std::unique_ptr<Link>>& Player::getLinks() const {
+    return links;
 }

@@ -1,6 +1,7 @@
 #include "link.h"
 
-Link(char id, char playerId, int strength, bool revealed = false, bool boosted = false, bool downloaded = false, bool isVirus) : id{id}, playerId{playerId}, strength{strength} {}
+Link::Link(char id, int playerId, int strength, bool revealed = false, bool boosted = false, bool downloaded = false, bool isVirus) : 
+    id{id}, playerId{playerId}, strength{strength} {}
 
 bool Link::battle(Link* other) {
     if (strength >= other->getStrength()) {
@@ -48,12 +49,16 @@ void Link::setBoosted() {
     boosted = true;
 }
 
-bool isBoosted() const {
+bool Link::isBoosted() const {
     return boosted;
 }
 
 int Link::getStrength() const {
     return strength;
+}
+
+bool Link::getIsVirus() const {
+    return isVirus;
 }
 
 char Link::getOwner() const {
