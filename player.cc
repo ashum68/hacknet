@@ -1,4 +1,5 @@
 #include "player.h"
+using namespace std;
 
 const int WINNING_DATA = 4;
 const int LOSING_VIRUSES = 4;
@@ -6,12 +7,12 @@ const int LOSING_VIRUSES = 4;
 Player::Player(int id) 
     : id{id}, downloadedData{0}, downloadedViruses{0}, usedAbilityThisTurn{false} {}
 
-void Player::addLink(std::unique_ptr<Link> link) {
-    links.push_back(std::move(link));
+void Player::addLink(unique_ptr<Link> link) {
+    links.push_back(move(link));
 }
 
-void Player::addAbility(std::unique_ptr<Ability> ability) {
-    abilities.push_back(std::move(ability));
+void Player::addAbility(unique_ptr<Ability> ability) {
+    abilities.push_back(move(ability));
 }
 
 bool Player::useAbility(int abilityIndex, Cell* c) {
@@ -31,25 +32,13 @@ bool Player::useAbility(int abilityIndex, Cell* c) {
     return result;
 }
 
-bool Player::downloadLink(Link* link) {
-    if (!link) {
+bool Player::downloadLink(int linkIndex) {
+    if (linkIndex < 0 || linkIndex >= links.size()) {
         return false;
     }
 
-    // Ensure the player owns the link or is allowed to download it
-    bool isOwnLink = false;
-    for (const auto& ownLink : links) {
-        if (ownLink.get() == link) {
-            isOwnLink = true;
-            break;
-        }
-    }
-
-    if (!isOwnLink) {
-        return false;
-    }
-
-    link->setDownloaded();
+    auto& link = links[linkIndex];
+    link->setDownloaded(true);
 
     if (link->isVirus()) {
         downloadedViruses++;
@@ -69,7 +58,7 @@ bool Player::hasLost() const {
 }
 
 std::string Player::getName() const {
-    return "Player " + std::to_string(id + 1);
+    return "Player " + to_string(id + 1);
 }
 
 int Player::getDownloadedData() const {
