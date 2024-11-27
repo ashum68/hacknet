@@ -23,8 +23,5 @@ class Player {
         
         string getName() const;
         int getDownloadedData() const;
-        void setDownloadedData(int newDownloaded);
-        int getDownloadedViruses() const;
-        void setDownloadedViruses(int newDownloaded);
-    
-};
+  
+  
