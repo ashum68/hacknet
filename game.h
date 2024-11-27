@@ -6,10 +6,11 @@
 #include "board.h"
 #include "player.h"
 #include "ability.h"
+#include "subject.h"
 
 using namespace std;
 
-class Game {
+class Game : public Subject {
     vector<unique_ptr<Player>> players;
     int currplayer;
     unique_ptr<Board> board;
