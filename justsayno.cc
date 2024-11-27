@@ -1,7 +1,7 @@
 #include "justsayno.h"
 using namespace std;
 
-JustSayNo::JustSayNo(char playerId) : Ability{playerId} {}
+JustSayNo::JustSayNo(int playerId) : Ability{playerId} {}
 
 bool JustSayNo::use(Cell *c) {
    

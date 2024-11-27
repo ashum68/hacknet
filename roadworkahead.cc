@@ -1,7 +1,7 @@
 #include "linkboost.h"
 using namespace std;
 
-RoadWorkAhead::RoadWorkAhead(char playerId) : Ability{playerId} {}
+RoadWorkAhead::RoadWorkAhead(int playerId) : Ability{playerId} {}
 
 bool RoadWorkAhead::use(Cell *c) {
     

@@ -1,7 +1,7 @@
 #include "linkboost.h"
 using namespace std;
 
-Roulette::Roulette(char playerId) : Ability{playerId} {}
+Roulette::Roulette(int playerId) : Ability{playerId} {}
 
 bool Roulette::use(Cell *c) {
     

@@ -1,7 +1,7 @@
 #include "firewall.h"
 using namespace std;
 
-Firewall::Firewall(char playerId) : Ability{playerId} {}
+Firewall::Firewall(int playerId) : Ability{playerId} {}
 
 // a link being "revealed" as its strength and type being revealed.
 

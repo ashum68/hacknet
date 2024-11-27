@@ -1,6 +1,6 @@
 #include "ability.h"
 
-Ability::Ability(char playerId) : playerId{playerId} {}
+Ability::Ability(int playerId) : playerId{playerId} {}
 
 bool Ability::getUsed() const { return isUsed; }
 

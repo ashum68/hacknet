@@ -5,7 +5,7 @@ using namespace std;
 
 class RoadWorkAhead : public Ability {
     public:
-        RoadWorkAhead(char playerId);
+        RoadWorkAhead(int playerId);
         bool use(Cell *c) override;
         string getName() const override;
 };

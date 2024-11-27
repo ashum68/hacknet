@@ -1,7 +1,7 @@
 #include "linkboost.h"
 using namespace std;
 
-LinkBoost::LinkBoost(char playerId) : Ability{playerId} {}
+LinkBoost::LinkBoost(int playerId) : Ability{playerId} {}
 
 // link boosts can be stacked
 

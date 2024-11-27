@@ -5,7 +5,7 @@ using namespace std;
 
 class LinkBoost : public Ability {
     public:
-        LinkBoost(char playerId);
+        LinkBoost(int playerId);
         bool use(Cell *c) override;
         string getName() const override;
 };

@@ -5,7 +5,7 @@ using namespace std;
 
 class JustSayNo : public Ability {
     public:
-        JustSayNo(char playerId);
+        JustSayNo(int playerId);
         bool use(Cell *c) override;
         string getName() const override;
 };
