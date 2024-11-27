@@ -5,13 +5,14 @@
 using namespace std;
 
 class Ability {
-    int playerId;
-    bool isUsed = false;
+    protected:
+        int playerId;
+        bool isUsed = false;
     public:
         Ability(int playerId);
         bool getUsed() const;
         void setUsed();
-        virtual bool use(Cell* c);
+        virtual bool use(Cell* c) = 0;
         virtual string getName() const = 0;
 };
 
