@@ -1,16 +1,18 @@
 #include <iostream>
 #include <map>
+#include <vector>
 #include "game.h"
 #include "link.h"
 #include "player.h"
+#include "board.h"
+#include "ability.h"
 
 using namespace std;
 
-Game::Game(vector<Player*> players, Board* board):
-    player(players), currplayer(0), board(board) {}
+Game::Game(std::vector<std::unique_ptr<Player>> players, std::unique_ptr<Board> board)
+    : players(std::move(players)), currplayer(0), board(std::move(board)) {}
 
 void Game::start() {
-
     cout << "How many players are playing, 2 or 4?" << endl;
     int numPlayers = 0;
 
@@ -22,63 +24,59 @@ void Game::start() {
         }
     }
 
-    player.resize(numPlayers); // either size of 2 or 4 now
+    players.reserve(numPlayers);
     
-    for (int i = 0; i < player.size(); i++) { // add shit to both players links and abilitiies
-        // init map for letters that are filled
-        map<char, bool> occupied;
-
-        if (i == 0) {
-            occupied['a'] = false;
-            occupied['b'] = false;
-            occupied['c'] = false;
-            occupied['d'] = false;
-            occupied['e'] = false;
-            occupied['f'] = false;
-            occupied['g'] = false;
-            occupied['h'] = false;
-        } else if (i == 1) {
-            occupied['A'] = false;
-            occupied['B'] = false;
-            occupied['C'] = false;
-            occupied['D'] = false;
-            occupied['E'] = false;
-            occupied['F'] = false;
-            occupied['G'] = false;
-            occupied['H'] = false;
+    // Initialize each player
+    for (int i = 0; i < numPlayers; i++) {
+        auto player = std::make_unique<Player>(i);
+        cout << "\nPlayer " << i + 1 << "'s turn to place links." << endl;
+        
+        // Track which positions are occupied
+        vector<bool> occupied(8, false);
+        
+        // Place Data links (D1-D4)
+        for (int j = 1; j <= 4; j++) {
+            cout << "Choose position (a-h) for D" << j << ": ";
+            char pos;
+            cin >> pos;
+            
+            // Validate input
+            while (pos < 'a' || pos > 'h' || occupied[pos - 'a']) {
+                cout << "Invalid position. Please enter an unoccupied position (a-h): ";
+                cin >> pos;
+            }
+            
+            // Create and add Data link
+            auto newLink = std::make_unique<Link>(pos, i, j, false, false, false, false);
+            player->addLink(std::move(newLink));
+            occupied[pos - 'a'] = true;
         }
         
-        player[i] = new Player(i);
-        cout << "Player " << i << "'s turn." << endl;
-
-        for (int j = 0; j < 4; j++) { // adding data 1-4
-            cout << "Choose position a-h for D" << j << ":" << endl;
+        // Place Virus links (V1-V4)
+        for (int j = 1; j <= 4; j++) {
+            cout << "Choose position (a-h) for V" << j << ": ";
             char pos;
             cin >> pos;
-            while (pos < 'a' || pos > 'h' || occupied[pos]) {
-                cout << "Invalid position. Please enter a non-occupied or valid position." << endl;
+            
+            // Validate input
+            while (pos < 'a' || pos > 'h' || occupied[pos - 'a']) {
+                cout << "Invalid position. Please enter an unoccupied position (a-h): ";
                 cin >> pos;
             }
-            Link* newLink = new Link(pos, i, j, false);
-            player[i]->addLink(newLink);
-            occupied[pos] = true;
+            
+            // Create and add Virus link
+            auto newLink = std::make_unique<Link>(pos, i, j, false, false, false, true);
+            player->addLink(std::move(newLink));
+            occupied[pos - 'a'] = true;
         }
-
-        for (int j = 0; j < 4; j++) { // adding virus 1-4
-            cout << "Choose position a-h for V" << j << ":" << endl;
-            char pos;
-            cin >> pos;
-            while (pos < 'a' || pos > 'h' || occupied[pos]) {
-                cout << "Invalid position. Please enter a non-occupied or valid position." << endl;
-                cin >> pos;
-            }
-            Link* newLink = new Link(pos, i, j, true);
-            player[i]->addLink(newLink);
-            occupied[pos] = true;
-        }
-
-
+        
+        initializePlayerAbilities(player.get());
+        players.push_back(std::move(player));
     }
+    
+    // Initialize board state
+    board->initializeBoard(players);
+    currplayer = 0;
 }
 
 void Game::processCommand(const string& cmd) {
@@ -86,11 +84,93 @@ void Game::processCommand(const string& cmd) {
 }
 
 bool Game::isGameOver() const {
-    // Implementation here
+    for (const auto& player : players) {
+        if (player->hasWon() || player->hasLost()) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void Game::switchPlayer() {
-    // Implementation here
+    currplayer = (currplayer + 1) % players.size();
 }
 
+void Game::displayAbilityMenu() const {
+    cout << "\nChoose abilities (max " << MAX_ABILITIES << " total, max " 
+         << MAX_SAME_ABILITY << " of each type):\n";
+    cout << "1. Link Boost\n2. Firewall\n3. Download\n4. Scan\n"
+         << "5. Polarize\n6. Just Say No\n7. Road Work Ahead\n8. Roulette\n";
+}
 
+bool Game::isValidAbilityChoice(int choice) const {
+    return choice >= 1 && choice <= 8;
+}
+
+void Game::initializePlayerAbilities(Player* player) {
+    if (!player) return;
+    
+    std::map<std::string, int> abilityCount;
+    int abilitiesChosen = 0;
+    
+    displayAbilityMenu();
+    
+    while (abilitiesChosen < MAX_ABILITIES) {
+        std::cout << "\nChoose ability " << (abilitiesChosen + 1) << " of " << MAX_ABILITIES << ": ";
+        
+        int choice;
+        std::cin >> choice;
+        
+        if (!isValidAbilityChoice(choice)) {
+            std::cout << "Invalid choice. Please select 1-8.\n";
+            continue;
+        }
+        
+        std::unique_ptr<Ability> newAbility;
+        
+        switch (choice) {
+            case 1:
+                newAbility = std::make_unique<LinkBoost>(player->getId());
+                break;
+            case 2:
+                newAbility = std::make_unique<Firewall>(player->getId());
+                break;
+            case 3:
+                newAbility = std::make_unique<Download>(player->getId());
+                break;
+            case 4:
+                newAbility = std::make_unique<Scan>(player->getId());
+                break;
+            case 5:
+                newAbility = std::make_unique<Polarize>(player->getId());
+                break;
+            case 6:
+                newAbility = std::make_unique<JustSayNo>(player->getId());
+                break;
+            case 7:
+                newAbility = std::make_unique<RoadWorkAhead>(player->getId());
+                break;
+            case 8:
+                newAbility = std::make_unique<Roulette>(player->getId());
+                break;
+            default:
+                std::cout << "Invalid choice. Please select a valid ability.\n";
+                continue;
+        }
+        
+        if (!newAbility) {
+            std::cout << "Failed to create the selected ability.\n";
+            continue;
+        }
+        
+        if (abilityCount[newAbility->getName()] >= MAX_SAME_ABILITY) {
+            std::cout << "Maximum count (" << MAX_SAME_ABILITY 
+                      << ") reached for " << newAbility->getName() << ". Choose another.\n";
+            continue;
+        }
+        
+        player->addAbility(std::move(newAbility));
+        abilityCount[player->getAbilities().back()->getName()]++;
+        abilitiesChosen++;
+    }
+}

@@ -12,7 +12,7 @@ class Player {
     bool usedAbilityThisTurn;
 
     public:
-        Player(const id& id);
+        Player(const char &id);
         
         void addLink(Link* link);
         void addAbility(Ability* ability);
@@ -23,8 +23,5 @@ class Player {
         
         string getName() const;
         int getDownloadedData() const;
-        void setDownloadedData(int newDownloaded);
-        int getDownloadedViruses() const;
-        void setDownloadedViruses(int newDownloaded);
-    
+  
 };
