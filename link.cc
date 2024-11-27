@@ -61,6 +61,10 @@ bool Link::getIsVirus() const {
     return isVirus;
 }
 
+void Link::setVirus() {
+    isVirus = !isVirus;
+}
+
 char Link::getOwner() const {
     return playerId;
 }

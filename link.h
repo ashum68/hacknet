@@ -23,6 +23,7 @@ public:
     int getRow() const;
     int getCol() const;
     bool getIsVirus() const;
+    void setVirus();
     int setRow(int r);
     int setCol(int c);
     char getOwner() const;
