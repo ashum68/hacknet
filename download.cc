@@ -3,6 +3,8 @@ using namespace std;
 
 Download::Download(char playerId) : Ability{playerId} {}
 
+// immediately downloads an opponent’s targeted link. It does not need to be revealed.
+
 void Download::use(Cell *c) {
     Link *link = c->getLink();
     if (!link) return false;
