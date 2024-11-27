@@ -1,6 +1,6 @@
 #include "link.h"
 
-Link::Link(char id, int playerId, int strength, bool revealed = false, bool boosted = false, bool downloaded = false, bool isVirus) : 
+Link::Link(char id, int playerId, int strength, bool revealed = false, int boosted = 0, bool downloaded = false, bool isVirus) : 
     id{id}, playerId{playerId}, strength{strength} {}
 
 bool Link::battle(Link* other) {
@@ -45,11 +45,11 @@ bool Link::getDownloaded() const {
     return downloaded;
 }
 
-void Link::setBoosted() {
-    boosted = true;
+void Link::addBoosted() {
+    boosted++;
 }
 
-bool Link::isBoosted() const {
+int Link::getBoosted() const {
     return boosted;
 }
 

@@ -6,19 +6,19 @@
 
 class Link {
     char id;
-    int playerId, strength, row, col;
-    bool revealed, boosted, downloaded, isVirus;
+    int playerId, strength, row, col, boosted;
+    bool revealed, downloaded, isVirus;
 
 public:
-    Link(char id, int playerId, int strength, bool revealed = false, bool boosted = false, bool downloaded = false, bool isVirus);
+    Link(char id, int playerId, int strength, bool revealed = false, int boosted = 0, bool downloaded = false, bool isVirus);
     bool battle(Link* other);
     void reveal();
 
     char getId() const;
     bool getDownloaded() const;
     void setDownloaded();
-    void setBoosted();
-    bool isBoosted() const;
+    void addBoosted();
+    int getBoosted() const;
     int getStrength() const;
     int getRow() const;
     int getCol() const;
