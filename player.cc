@@ -5,6 +5,10 @@ const int LOSING_VIRUSES = 4;
 
 Player::Player(const id& id) : id{id}, downloadedData{0}, downloadedViruses{0}, usedAbilityThisTurn{false} {}
 
+void getLijnks() const {
+    return links;
+}
+
 void Player::addLink(Link* link) {
     links.push_back(link);
 }

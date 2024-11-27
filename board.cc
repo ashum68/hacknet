@@ -1,6 +1,15 @@
 #include "board.h"
 #include "direction.h"
 
+void Board::initializeBoard(vector<Player*> players) {
+    for (int i = 0; i < players.size(); i++) {
+        vector<Link*> links = players[i]->getLinks();
+        for (int j = 0; j < links.size(); j++) {
+            grid[links[j]->getRow()][links[j]->getCol()]->setLink(links[j]);
+        }
+    }
+}
+
 bool Board::moveLink(Link* link, Direction dir) {
     int row = link->getRow();
     int col = link->getCol();

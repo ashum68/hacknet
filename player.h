@@ -12,9 +12,10 @@ class Player {
     bool usedAbilityThisTurn;
 
     public:
-        Player(const id& id);
+        Player(const char& id);
         
         void addLink(Link* link);
+        vector<Link*> getLinks() const;
         void addAbility(Ability* ability);
         bool useAbility(Ability* ability, Cell* c);
         bool downloadLink(Link* link); 
