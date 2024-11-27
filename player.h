@@ -24,4 +24,4 @@ class Player {
         string getName() const;
         int getDownloadedData() const;
   
-  
+};

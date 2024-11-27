@@ -1,12 +1,18 @@
+#ifndef GAME_H
+#define GAME_H
+
+#include <vector>
+#include <memory>
 #include "board.h"
 #include "player.h"
-using namsepace std;
+#include "ability.h"
+
+using namespace std;
 
 class Game {
-    // Player* player1, player2;
-    vector<Player*> players;
+    vector<unique_ptr<Player>> players;
     int currplayer;
-    Board* board;
+    unique_ptr<Board> board;
 
     private:
         static const int MAX_ABILITIES = 5;
@@ -16,8 +22,8 @@ class Game {
         bool isValidAbilityChoice(int choice) const;
 
     public:
-        Game(vector<Player*> players, Board* board);
-        ~Game(); // void? test
+        Game(vector<unique_ptr<Player>> players, unique_ptr<Board> board);
+        ~Game();
         
         void start();
         void processCommand(const string& cmd);
@@ -26,3 +32,5 @@ class Game {
         void initializePlayerAbilities(Player* player);
 
 };
+
+#endif

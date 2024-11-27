@@ -1,13 +1,16 @@
 #include <iostream>
 #include <map>
+#include <vector>
 #include "game.h"
 #include "link.h"
 #include "player.h"
+#include "board.h"
+#include "ability.h"
 
 using namespace std;
 
-Game::Game(vector<Player*> players, Board* board):
-    players(players), currplayer(0), board(board) {}
+Game::Game(std::vector<std::unique_ptr<Player>> players, std::unique_ptr<Board> board)
+    : players(std::move(players)), currplayer(0), board(std::move(board)) {}
 
 void Game::start() {
     cout << "How many players are playing, 2 or 4?" << endl;
@@ -21,11 +24,11 @@ void Game::start() {
         }
     }
 
-    players.resize(numPlayers);
+    players.reserve(numPlayers);
     
     // Initialize each player
     for (int i = 0; i < numPlayers; i++) {
-        players[i] = new Player(i);
+        auto player = std::make_unique<Player>(i);
         cout << "\nPlayer " << i + 1 << "'s turn to place links." << endl;
         
         // Track which positions are occupied
@@ -44,8 +47,8 @@ void Game::start() {
             }
             
             // Create and add Data link
-            Link* newLink = new Link(pos, i, j, false, false, false, false);
-            players[i]->addLink(newLink);
+            auto newLink = std::make_unique<Link>(pos, i, j, false, false, false, false);
+            player->addLink(std::move(newLink));
             occupied[pos - 'a'] = true;
         }
         
@@ -62,12 +65,13 @@ void Game::start() {
             }
             
             // Create and add Virus link
-            Link* newLink = new Link(pos, i, j, false, false, false, true);
-            players[i]->addLink(newLink);
+            auto newLink = std::make_unique<Link>(pos, i, j, false, false, false, true);
+            player->addLink(std::move(newLink));
             occupied[pos - 'a'] = true;
         }
         
-        initializePlayerAbilities(players[i]);
+        initializePlayerAbilities(player.get());
+        players.push_back(std::move(player));
     }
     
     // Initialize board state
@@ -80,7 +84,7 @@ void Game::processCommand(const string& cmd) {
 }
 
 bool Game::isGameOver() const {
-    for (Player* player : players) {
+    for (const auto& player : players) {
         if (player->hasWon() || player->hasLost()) {
             return true;
         }
@@ -90,20 +94,6 @@ bool Game::isGameOver() const {
 
 void Game::switchPlayer() {
     currplayer = (currplayer + 1) % players.size();
-}
-
-Ability* Game::createAbility(AbilityType type) {
-    switch (type) {
-        case AbilityType::LINK_BOOST: return new LinkBoost();
-        case AbilityType::FIREWALL: return new Firewall();
-        case AbilityType::DOWNLOAD: return new Download();
-        case AbilityType::SCAN: return new Scan();
-        case AbilityType::POLARIZE: return new Polarize();
-        case AbilityType::JUST_SAY_NO: return new JustSayNo();
-        case AbilityType::ROAD_WORK_AHEAD: return new RoadWorkAhead();
-        case AbilityType::ROULETTE: return new Roulette();
-        default: return nullptr;
-    }
 }
 
 void Game::displayAbilityMenu() const {
@@ -120,44 +110,67 @@ bool Game::isValidAbilityChoice(int choice) const {
 void Game::initializePlayerAbilities(Player* player) {
     if (!player) return;
     
-    map<string, int> abilityCount;
+    std::map<std::string, int> abilityCount;
     int abilitiesChosen = 0;
     
     displayAbilityMenu();
     
     while (abilitiesChosen < MAX_ABILITIES) {
-        cout << "\nChoose ability " << (abilitiesChosen + 1) 
-             << " of " << MAX_ABILITIES << ": ";
+        std::cout << "\nChoose ability " << (abilitiesChosen + 1) << " of " << MAX_ABILITIES << ": ";
         
         int choice;
-        cin >> choice;
+        std::cin >> choice;
         
         if (!isValidAbilityChoice(choice)) {
-            cout << "Invalid choice. Please select 1-8.\n";
+            std::cout << "Invalid choice. Please select 1-8.\n";
             continue;
         }
         
-        Ability* newAbility = nullptr;
+        std::unique_ptr<Ability> newAbility;
+        
         switch (choice) {
-            case 1: newAbility = new LinkBoost(); break;
-            case 2: newAbility = new Firewall(); break;
-            case 3: newAbility = new Download(); break;
-            case 4: newAbility = new Scan(); break;
-            case 5: newAbility = new Polarize(); break;
-            case 6: newAbility = new JustSayNo(); break;
-            case 7: newAbility = new RoadWorkAhead(); break;
-            case 8: newAbility = new Roulette(); break;
+            case 1:
+                newAbility = std::make_unique<LinkBoost>(player->getId());
+                break;
+            case 2:
+                newAbility = std::make_unique<Firewall>(player->getId());
+                break;
+            case 3:
+                newAbility = std::make_unique<Download>(player->getId());
+                break;
+            case 4:
+                newAbility = std::make_unique<Scan>(player->getId());
+                break;
+            case 5:
+                newAbility = std::make_unique<Polarize>(player->getId());
+                break;
+            case 6:
+                newAbility = std::make_unique<JustSayNo>(player->getId());
+                break;
+            case 7:
+                newAbility = std::make_unique<RoadWorkAhead>(player->getId());
+                break;
+            case 8:
+                newAbility = std::make_unique<Roulette>(player->getId());
+                break;
+            default:
+                std::cout << "Invalid choice. Please select a valid ability.\n";
+                continue;
+        }
+        
+        if (!newAbility) {
+            std::cout << "Failed to create the selected ability.\n";
+            continue;
         }
         
         if (abilityCount[newAbility->getName()] >= MAX_SAME_ABILITY) {
-            cout << "Maximum count (" << MAX_SAME_ABILITY 
-                 << ") reached for " << newAbility->getName() << ". Choose another.\n";
-            delete newAbility;
+            std::cout << "Maximum count (" << MAX_SAME_ABILITY 
+                      << ") reached for " << newAbility->getName() << ". Choose another.\n";
             continue;
         }
         
-        player->addAbility(newAbility);
-        abilityCount[newAbility->getName()]++;
+        player->addAbility(std::move(newAbility));
+        abilityCount[player->getAbilities().back()->getName()]++;
         abilitiesChosen++;
     }
 }
