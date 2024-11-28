@@ -123,6 +123,8 @@ void Board::display() const {
                 std::cout << cell->getLink()->getId();
             } else if (cell->isCellBlocked()) {
                 std::cout << 'X';
+            } else if (cell->isFirewallOn1() || cell->isFirewallOn2()) {
+                std::cout << 'F';
             } else {
                 std::cout << '.';
             }

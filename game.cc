@@ -536,19 +536,54 @@ void Game::processCommand(const std::string& cmd) {
         std::cout << "Exiting the game. Goodbye!" << std::endl;
         exit(0);
 
-    } else if (command == "op") {
+    }     else if (command == "op") {
         const auto& allPlayerInfo = board->getPlayers();
         for (const auto& playerInfo : allPlayerInfo) {
-            std::cout << playerInfo->getId() << " " << playerInfo->getName() << std::endl;
+            std::cout << "Player " << playerInfo->getId() + 1 << " - " << playerInfo->getName() << std::endl;
+            
+            // Display Links
             for (const auto& linkPtr : playerInfo->getLinks()) {
                 char linkId = linkPtr->getId();
                 std::string type = linkPtr->getIsVirus() ? "V" : "D";
                 int strength = linkPtr->getStrength();
                 bool downloaded = linkPtr->getDownloaded();
-                std::cout << linkId << " " << type << " " << strength << " is downloaded:" << (downloaded ? "yes" : "no") << std::endl;
+                std::cout << "  Link: " << linkId << " " << type << " " << strength 
+                          << " is downloaded: " << (downloaded ? "yes" : "no") << std::endl;
+            }
+            
+            // Display Abilities
+            const auto& abilities = playerInfo->getAbilities();
+            std::cout << "  Abilities:" << std::endl;
+            for (const auto& ability : abilities) {
+                std::cout << "    " << ability->getName() 
+                          << " - " << (ability->getUsed() ? "Used" : "Available") << std::endl;
             }
             std::cout << std::endl;
         }
+
+        // Display Blocked Cells
+        std::cout << "Blocked Cells:" << std::endl;
+        for (int i = 0; i < board->getRows(); ++i) {
+            for (int j = 0; j < board->getCols(); ++j) {
+                Cell* cell = board->getCell(i, j);
+                if (cell->isCellBlocked()) {
+                    std::cout << "(" << i << ", " << j << ") ";
+                }
+            }
+        }
+        std::cout << std::endl;
+
+        // Display Firewalled Cells
+        std::cout << "Firewalled Cells:" << std::endl;
+        for (int i = 0; i < board->getRows(); ++i) {
+            for (int j = 0; j < board->getCols(); ++j) {
+                Cell* cell = board->getCell(i, j);
+                if (cell->isFirewallOn1() || cell->isFirewallOn2()) {
+                    std::cout << "(" << i << ", " << j << ") ";
+                }
+            }
+        }
+        std::cout << std::endl;
     } else {
         std::cout << "Unknown command: " << tokens[0] << ". Please try again." << std::endl;
     }
