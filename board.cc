@@ -72,9 +72,8 @@ bool Board::moveLink(Link* link, Direction dir) {
 
     Cell* newCell = grid[newRow][newCol].get();
     if (newCell->canOccupy(link)) {
-        int opponentIndex = newCell->getLink()->getOwner();
-        Player* opponent = players[opponentIndex];
         if (newCell->getServerPort()) {
+            Player* opponent = players[newCell->getServerPort() - 1];
             link->getIsVirus() ? opponent->incDownloadedViruses() : opponent->incDownloadedData();
             link->setDownloaded();
             grid[row][col]->emptyCell();
@@ -83,6 +82,8 @@ bool Board::moveLink(Link* link, Direction dir) {
             return true;
         }
         if (newCell->getLink()) {
+            int opponentIndex = newCell->getLink()->getOwner();
+            Player* opponent = players[opponentIndex];
             bool battleResult = link->battle(newCell->getLink());
             if (battleResult) { // if you won - download what opponent has
                 newCell->getLink()->getIsVirus() ? players[currentPlayer]->incDownloadedViruses() : players[currentPlayer]->incDownloadedData();
