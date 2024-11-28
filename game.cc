@@ -630,6 +630,8 @@ void Game::initializePlayerAbilities(Player* player) {
         
         if (!isValidAbilityChoice(choice)) {
             cout << "Invalid choice. Please select a number between 1 and 8." << endl;
+            cin.clear();
+            cin.ignore();
             continue;
         }
         
