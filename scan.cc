@@ -6,7 +6,10 @@ using namespace std;
 Scan::Scan(Player *player) : Ability{player} {}
 
 void Scan::use(Cell *c) {
-    /* Impl */
+    Link *link = c->getLink();
+    if (!link) return false;
+    
+    return true;
 }
 
 string Scan::getName() const { return "Scan"; }

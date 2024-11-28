@@ -17,6 +17,8 @@ public:
     char getId() const;
     bool getDownloaded() const;
     void setDownloaded();
+    bool isRevealed() const;
+    void setRevealed();
     void addBoosted();
     int getBoosted() const;
     int getStrength() const;

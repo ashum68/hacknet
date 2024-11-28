@@ -45,6 +45,14 @@ bool Link::getDownloaded() const {
     return downloaded;
 }
 
+bool Link::isRevealed() const {
+    return revealed;
+}
+
+void Link::setRevealed() {
+    revealed = true;
+}
+
 void Link::addBoosted() {
     boosted++;
 }
