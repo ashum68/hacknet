@@ -6,7 +6,11 @@ Cell::Cell(Link* link, int row, int col) // default set all to false when create
       hasServerPort(false), isBlocked(false) {}
 
 bool Cell::canOccupy(Link* link) const {
-    return !isBlocked && this->link == nullptr;
+    Link* currLink = this->link;
+    if (currLink->getOwner() != link->getOwner()) {
+        
+    }
+    // return !isBlocked && this->link == nullptr;
 }
 
 void Cell::setLink(Link* newLink) {
