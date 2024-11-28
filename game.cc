@@ -138,10 +138,10 @@ void Game::run() {
         processCommand(command);
         
         // Only display board after a valid move
-        if (command.substr(0, 4) == "move") {
-            switchPlayer();
-            board->notifyObservers();
-        }
+        // if (command.substr(0, 4) == "move") {
+        //     switchPlayer();
+        //     board->notifyObservers();
+        // }
     }
     
     // Game over - announce winner
@@ -222,6 +222,7 @@ void Game::processCommand(const std::string& cmd) {
         // Attempt to move the link
         if (board->moveLink(targetLink, dir)) {
             std::cout << "Moved link '" << linkStr << "' " << directionStr << "." << std::endl;
+            switchPlayer();
         } else {
             std::cout << "Failed to move link '" << linkStr << "' " << directionStr << "." << std::endl;
         }
