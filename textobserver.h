@@ -8,6 +8,10 @@ class TextObserver : public Observer {
     public:
         TextObserver(Game* game) : game(game) {}
         void notify() override;
+        void displayBoard() const;
+        void displayPlayerInfo() const;
+        void displayAbilityMenu() const;
+        // void displayEndGame() const;
 };
 
 #endif

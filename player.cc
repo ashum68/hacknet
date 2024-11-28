@@ -61,10 +61,13 @@ bool Player::hasLost() const {
 
 int Player::getId() const {
     return id;
+<<<<<<< HEAD
 }
 
 std::string Player::getName() const {
     return "Player " + to_string(id + 1);
+=======
+>>>>>>> 6c14ee1 (updated .h)
 }
 
 int Player::getDownloadedData() const {
