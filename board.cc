@@ -74,7 +74,7 @@ bool Board::moveLink(Link* link, Direction dir) {
     if (newCell->canOccupy(link)) {
         if (newCell->getServerPort()) {
             Player* opponent = players[newCell->getServerPort() - 1];
-            link->getIsVirus() ? opponent->incDownloadedViruses() : opponent->incDownloadedData();
+            link->getIsVirus() ? opponent->incDownloadedViruses() : players[currentPlayer]->incDownloadedData();
             link->setDownloaded();
             grid[row][col]->emptyCell();
             grid[newRow][newCol]->emptyCell();
