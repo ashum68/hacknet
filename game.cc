@@ -66,10 +66,11 @@ void Game::start() {
             while (pos < 'a' || pos > 'h' || occupied[pos - 'a']) {
                 i == 0 ? cout << "Invalid position. Please enter an unoccupied position (a-h): " : cout << "Choose position (A-H) for D" << j << ": ";
                 cin >> pos;
+                pos = tolower(pos);
             }
             
             // Create and add Data link
-            auto newLink = std::make_unique<Link>(i == 1 ? toupper(pos) : pos, i, j, false, (i == 0) ? ((j == 4) ? 1 : 0) : ((j == 4) ? 6 : 7), j - 1);
+            auto newLink = std::make_unique<Link>(i == 1 ? toupper(pos) : pos, i, j, false, (i == 0) ? ((pos - 'a'== 3 || pos - 'a' == 4) ? 1 : 0) : ((pos - 'a' == 3 || pos - 'a' == 4) ? 6 : 7), pos - 'a');
             player->addLink(std::move(newLink));
             occupied[pos - 'a'] = true;
         }
@@ -79,15 +80,17 @@ void Game::start() {
             cout << "Choose position (a-h) for V" << j << ": ";
             char pos;
             cin >> pos;
+            pos = tolower(pos);
             
             // Validate input
             while (pos < 'a' || pos > 'h' || occupied[pos - 'a']) {
-                cout << "Invalid position. Please enter an unoccupied position (a-h): ";
+                i == 0 ? cout << "Invalid position. Please enter an unoccupied position (a-h): " : cout << "Choose position (A-H) for V" << j << ": ";
                 cin >> pos;
+                pos = tolower(pos);
             }
             
             // Create and add Virus link
-            auto newLink = std::make_unique<Link>(pos, i, j, true, (i == 0) ? ((j == 1) ? 1 : 0) : ((j == 1) ? 6 : 7), j + 4 - 1);
+            auto newLink = std::make_unique<Link>(i == 1 ? toupper(pos) : pos, i, j, true, (i == 0) ? ((pos - 'a' == 3 || pos - 'a' == 4) ? 1 : 0) : ((pos - 'a' == 3 || pos - 'a' == 4) ? 6 : 7), pos - 'a');
             player->addLink(std::move(newLink));
             occupied[pos - 'a'] = true;
         }
