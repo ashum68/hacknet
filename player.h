@@ -20,7 +20,7 @@ public:
     
     void addLink(unique_ptr<Link> link);
     void addAbility(unique_ptr<Ability> ability);
-    bool useAbility(int abilityIndex, Cell* c);
+    bool useAbility(int abilityIndex, Cell *c);
     bool downloadLink(int linkIndex);
     void removeLink(char linkId);
     bool hasWon() const;
