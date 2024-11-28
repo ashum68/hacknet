@@ -8,10 +8,8 @@
 #include "ability.h"
 #include "subject.h"
 #include "board.h"
-#include "textobserver.h"
 
-// Forward declaration
-class Board;
+class TextObserver;  // Forward declaration
 
 using namespace std;
 
@@ -22,7 +20,7 @@ class Game : public Subject {
     map<string, int> abilityCount;
     int abilitiesChosen = 0;
     int choice;
-    unique_ptr<TextObserver> textObserver;
+    Observer* textObserver;  // Change to raw pointer
 
     private:
         static const int MAX_ABILITIES = 5;
@@ -35,6 +33,7 @@ class Game : public Subject {
 
     public:
         Game(vector<unique_ptr<Player>> players);
+        ~Game();  // Add destructor declaration
         
         void start();
         void run();

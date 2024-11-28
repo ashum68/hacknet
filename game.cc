@@ -25,11 +25,14 @@ using std::move;
 Game::Game(vector<unique_ptr<Player>> players) : 
     players(std::move(players)), 
     currplayer(0), 
-    board(make_unique<Board>()) 
+    board(make_unique<Board>()),
+    textObserver(new TextObserver(this)) 
 {
-    // Create text observer and store it as a member
-    textObserver = make_unique<TextObserver>(board.get());
-    board->attach(textObserver.get());
+    attach(textObserver);
+}
+
+Game::~Game() {
+    detach(textObserver);
 }
 
 void Game::start() {
@@ -104,8 +107,8 @@ void Game::start() {
     board->initializeBoard(players);
     
     // Reattach observer to new board
-    textObserver = make_unique<TextObserver>(board.get());
-    board->attach(textObserver.get());
+    textObserver = new TextObserver(this);
+    attach(textObserver);
     
     currplayer = 0;
 }
@@ -115,9 +118,9 @@ void Game::run() {
     
     string command;
     cout << "\nWelcome to RAIInet!" << endl;
-    cin.ignore();  // Add this line to clear the input buffer
+    cin.ignore();  // Clear the input buffer
     
-    board->notifyObservers();  // Display board once at the start
+    notifyObservers();  // Display board at the start
     
     while (!isGameOver()) {
         Player* currentPlayer = players[currplayer].get();
@@ -136,10 +139,7 @@ void Game::run() {
         }
         
         processCommand(command);
-        
-        if (command.substr(0, 4) == "move") {
-            board->notifyObservers();
-        }
+        notifyObservers();  // Display board after each command
     }
     
     // Game over - announce winner
@@ -158,7 +158,7 @@ void Game::processCommand(const std::string& cmd) {
     
     if (tokens.empty()) {
         std::cout << "No command entered. Please try again." << std::endl;
-        board->notifyObservers();
+        // notifyObservers();
         return;
     }
     

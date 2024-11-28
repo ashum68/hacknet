@@ -3,13 +3,14 @@
 #include "observer.h"
 #include "board.h"
 #include "player.h"
+#include "game.h"
 #include <memory>
 
 class TextObserver : public Observer {
-    Board* board;
+    Game* game;
     
     public:
-        TextObserver(Board* board);
+        TextObserver(Game* game);
         void notify() override;
         char getLinkDisplay(const Link* link) const;
         void displayBoard() const;

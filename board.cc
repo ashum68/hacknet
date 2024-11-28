@@ -32,7 +32,7 @@ void Board::initializeBoard(const std::vector<std::unique_ptr<Player>>& players)
     grid[7][3]->setServerPort(2);
     grid[7][4]->setServerPort(2);
 
-    notifyObservers();
+    // notifyObservers();
 }
 
 bool Board::moveLink(Link* link, Direction dir) {
@@ -114,11 +114,11 @@ void Board::attach(Observer* obs) {
     observers.push_back(obs);
 }
 
-void Board::notifyObservers() {
-    for (auto observer : observers) {
-        observer->notify();
-    }
-}
+// void Board::notifyObservers() {
+//     for (auto observer : observers) {
+//         observer->notify();
+//     }
+// }
 
 void Board::display() const {
     for (int i = 0; i < getRows(); ++i) {

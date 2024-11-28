@@ -1,7 +1,7 @@
 #include "textobserver.h"
 #include <iostream>
 
-TextObserver::TextObserver(Board* board) : board{board} {}
+TextObserver::TextObserver(Game* game) : game{game} {}
 
 void TextObserver::notify() {
     displayBoard();
@@ -66,11 +66,12 @@ void TextObserver::displayPlayerInfo(const Player* player, bool showLinks) const
 }
 
 void TextObserver::displayBoard() const {
+    Board* board = game->getBoard();
     const auto& players = board->getPlayers();
     if (players.size() < 2) return;
     
     // Display Player 1's info and links (show if Player 1's turn, hide if Player 2's turn)
-    displayPlayerInfo(players[0], board->getCurrPlayer() == 0);
+    displayPlayerInfo(players[0], game->getCurrPlayer() == 0);
     
     std::cout << "========" << std::endl;
     
@@ -93,5 +94,5 @@ void TextObserver::displayBoard() const {
     std::cout << "========";
     
     // Display Player 2's info and links (show if Player 2's turn, hide if Player 1's turn)
-    displayPlayerInfo(players[1], board->getCurrPlayer() == 1);
+    displayPlayerInfo(players[1], game->getCurrPlayer() == 1);
 }
