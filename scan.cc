@@ -5,10 +5,10 @@ using namespace std;
 
 Scan::Scan(Player *player) : Ability{player} {}
 
-void Scan::use(Cell *c) {
+bool Scan::use(Cell *c) {
     Link *link = c->getLink();
-    if (!link) return false;
-    
+    if (!link || link->isRevealed()) return false;
+    link->setRevealed();
     return true;
 }
 
