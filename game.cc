@@ -219,6 +219,7 @@ void Game::processCommand(const std::string& cmd) {
         if (board->moveLink(targetLink, dir)) {
             std::cout << "Moved link '" << linkStr << "' " << directionStr << "." << std::endl;
             switchPlayer();
+            notifyObservers();
         } else {
             std::cout << "Failed to move link '" << linkStr << "' " << directionStr << "." << std::endl;
         }
