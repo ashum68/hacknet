@@ -8,7 +8,7 @@ void TextObserver::notify() {
 }
     
 char TextObserver::getLinkDisplay(const Link* link) const {
-    if (!link) return '.';
+    if (!link && !link->getDownloaded()) return '.';
     return link->getId();
 }
 
@@ -32,8 +32,6 @@ void TextObserver::displayPlayerInfo(const unique_ptr<Player> player, bool isCur
             } else {
                 std::cout << "?";
             }
-            
-            // Add space or newline
             if (std::tolower(id) == 'd' || std::tolower(id) == 'h') {
                 std::cout << std::endl;
             } else {

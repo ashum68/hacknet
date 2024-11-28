@@ -16,8 +16,8 @@ class Game : public Subject {
     unique_ptr<Board> board;
 
     private:
-        static const int MAX_ABILITIES = 5;
-        static const int MAX_SAME_ABILITY = 2;
+        const int MAX_ABILITIES = 5;
+        const int MAX_SAME_ABILITY = 2;
         
         void displayAbilityMenu() const;
         bool isValidAbilityChoice(int choice) const;

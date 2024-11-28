@@ -8,7 +8,7 @@ class Xwindow {
   Display *d;
   Window w;
   int s, width, height; // length?
-  // GC gc;
+  GC gc;
   unsigned long colours[10];
 
  public:
