@@ -3,12 +3,16 @@
 #include <iostream>
 
 Board::Board() {
-    grid.resize(8, std::vector<std::unique_ptr<Cell>>(8));
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
+    grid.resize(size, std::vector<std::unique_ptr<Cell>>(size));
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
             grid[i][j] = std::make_unique<Cell>(nullptr, i, j);
         }
     }
+}
+
+const int Board::getSize() const {
+    return size;
 }
 
 void Board::initializeBoard(const std::vector<std::unique_ptr<Player>>& players) {

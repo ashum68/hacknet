@@ -22,6 +22,7 @@ public:
     void addBoosted();
     int getBoosted() const;
     int getStrength() const;
+    void setStrength(int s);
     int getRow() const;
     int getCol() const;
     bool getIsVirus() const;
