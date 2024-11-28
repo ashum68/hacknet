@@ -1,4 +1,5 @@
 #include "board.h"
+#include <memory>
 #include <iostream>
 
 Board::Board() {
@@ -65,6 +66,24 @@ bool Board::moveLink(Link* link, Direction dir) {
 
     Cell* newCell = grid[newRow][newCol].get();
     if (newCell->canOccupy(link)) {
+        if (newCell->getLink()) {
+            bool battleResult = link->battle(newCell->getLink());
+            if (battleResult) { // if you won - download what opponent has
+                newCell->getLink()->getIsVirus() ? players[currentPlayer]->incDownloadedViruses() : players[currentPlayer]->incDownloadedData();
+                grid[row][col]->emptyCell();
+                newCell->setLink(link);
+                link->setRow(newRow);
+                link->setCol(newCol);
+                notifyObservers();
+                return true;
+            } else { // if you LOST
+                int opponentIndex = newCell->getLink()->getOwner();
+                Player* opponent = players[opponentIndex];
+                link->getIsVirus() ? opponent->incDownloadedViruses() : opponent->incDownloadedData();
+                notifyObservers();
+                return true;
+            }
+        }
         grid[row][col]->emptyCell();
         newCell->setLink(link);
         link->setRow(newRow);

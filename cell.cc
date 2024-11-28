@@ -7,18 +7,15 @@ Cell::Cell(Link* link, int row, int col) // default set all to false when create
       hasServerPort(false), isBlocked(false) {}
 
 bool Cell::canOccupy(Link* incomingLink) const {
+     // returns true if you CAN move into it
+     // returns false if you CANNOT move
     if (isBlocked) return false;
-    
-    // If cell is empty, allow movement
     if (this->link == nullptr) return true;
-    
-    // If there's a link in the cell
+
     if (incomingLink && this->link) {
-        // Don't allow moving into your own link
         if (incomingLink->getOwner() == this->link->getOwner()) {
             return false;
         }
-        // Allow moving into opponent's link (battle will occur)
         return true;
     }
     
