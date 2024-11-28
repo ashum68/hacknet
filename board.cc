@@ -31,8 +31,6 @@ void Board::initializeBoard(const std::vector<std::unique_ptr<Player>>& players)
     grid[0][4]->setServerPort(1);
     grid[7][3]->setServerPort(2);
     grid[7][4]->setServerPort(2);
-
-    // notifyObservers();
 }
 
 bool Board::moveLink(Link* link, Direction dir) {
@@ -74,7 +72,7 @@ bool Board::moveLink(Link* link, Direction dir) {
     if (newCell->canOccupy(link)) {
         if (newCell->getServerPort()) {
             Player* opponent = players[newCell->getServerPort() - 1];
-            link->getIsVirus() ? opponent->incDownloadedViruses() : players[currentPlayer]->incDownloadedData();
+            link->getIsVirus() ? opponent->incDownloadedViruses() : opponent->incDownloadedData();
             link->setDownloaded();
             grid[row][col]->emptyCell();
             grid[newRow][newCol]->emptyCell();
@@ -110,14 +108,8 @@ Cell* Board::getCell(int row, int col) const {
     return grid[row][col].get();
 }
 
-void Board::attach(Observer* obs) {
-    observers.push_back(obs);
-}
-
-// void Board::notifyObservers() {
-//     for (auto observer : observers) {
-//         observer->notify();
-//     }
+// void Board::attach(Observer* obs) {
+//     observers.push_back(obs);
 // }
 
 void Board::display() const {
