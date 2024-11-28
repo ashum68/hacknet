@@ -517,7 +517,20 @@ void Game::processCommand(const std::string& cmd) {
         // Exit the game
         std::cout << "Exiting the game. Goodbye!" << std::endl;
         exit(0);
-        
+
+    } else if (command == "op") {
+        const auto& allPlayerInfo = board->getPlayers();
+        for (const auto& playerInfo : allPlayerInfo) {
+            std::cout << playerInfo->getId() << " " << playerInfo->getName() << std::endl;
+            for (const auto& linkPtr : playerInfo->getLinks()) {
+                char linkId = linkPtr->getId();
+                std::string type = linkPtr->getIsVirus() ? "V" : "D";
+                int strength = linkPtr->getStrength();
+                bool downloaded = linkPtr->getDownloaded();
+                std::cout << linkId << " " << type << " " << strength << " is downloaded:" << (downloaded ? "yes" : "no") << std::endl;
+            }
+            std::cout << std::endl;
+        }
     } else {
         std::cout << "Unknown command: " << tokens[0] << ". Please try again." << std::endl;
     }

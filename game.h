@@ -9,7 +9,8 @@
 #include "subject.h"
 #include "board.h"
 
-class TextObserver;  // Forward declaration
+class TextObserver;
+class GraphicsObserver;
 
 using namespace std;
 

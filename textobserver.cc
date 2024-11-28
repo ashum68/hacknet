@@ -1,5 +1,6 @@
 #include "textobserver.h"
 #include <iostream>
+#include <cctype>
 
 TextObserver::TextObserver(Game* game) : game{game} {}
 
@@ -18,49 +19,57 @@ void TextObserver::displayPlayerInfo(const Player* player, bool showLinks) const
     }
     std::cout << "Abilities: " << availableAbilities << std::endl;
     
-    // Player 1 (id=0) always uses lowercase, Player 2 (id=1) always uses uppercase
-    if (player->getId() == 0) {  // Player 1
-        for (char c = 'a'; c <= 'h'; ++c) {
-            std::cout << c << ": ";
-            if (showLinks) {
-            bool found = false;
-            for (const auto& link : player->getLinks()) {
+    // Determine the case based on player ID
+    bool isPlayerOne = player->getId() == 0;
+    char startChar = isPlayerOne ? 'a' : 'A';
+    char endChar = isPlayerOne ? 'h' : 'H';
+    
+    for (char c = startChar; c <= endChar; ++c) {
+        std::cout << c << ": ";
+        
+        // Find the corresponding link
+        const Link* targetLink = nullptr;
+        for (const auto& link : player->getLinks()) {
+            if (isPlayerOne) {
                 if (std::tolower(link->getId()) == c) {
-                    if (!link->getDownloaded()) {
-                        std::cout << (link->getIsVirus() ? "V" : "D") << link->getStrength();
-                    }
-                    found = true;
+                    targetLink = link.get();
+                    break;
+                }
+            } else {
+                if (std::toupper(link->getId()) == c) {
+                    targetLink = link.get();
                     break;
                 }
             }
-            if (!found) std::cout << "  ";
-            } else {
-                std::cout << "?";
-            }
-            if (c != 'h' && c!= 'd') std::cout << " ";
-            else std::cout << std::endl;
         }
-    } else {  // Player 2
-        for (char c = 'A'; c <= 'H'; ++c) {
-            std::cout << c << ": ";
-            if (showLinks) {
-                bool found = false;
-                for (const auto& link : player->getLinks()) {
-                    if (std::toupper(link->getId()) == c) {
-                        if (!link->getDownloaded()) {
-                            std::cout << (link->getIsVirus() ? "V" : "D") 
-                                     << link->getStrength();
-                        }
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) std::cout << "  ";
-            } else {
-                std::cout << "?";
+        
+        if (targetLink) {
+            if (targetLink->getDownloaded()) {
+                // Link is captured
+                std::cout << "--";
             }
-            if (c != 'H' && c != 'D') std::cout << " ";
-            else std::cout << std::endl;
+            else if (showLinks) {
+                // Link is revealed and not captured
+                std::cout << (targetLink->getIsVirus() ? "V" : "D") 
+                          << targetLink->getStrength();
+            }
+            else {
+                // Link is hidden and not captured
+                std::cout << " ?";
+            }
+        }
+        else {
+            // No link exists at this position
+            std::cout << " ";
+        }
+        
+        // Formatting: add space or newline based on position
+        if ((isPlayerOne && (c != 'h' && c != 'd')) || 
+            (!isPlayerOne && (c != 'H' && c != 'D'))) {
+            std::cout << " ";
+        }
+        else {
+            std::cout << std::endl;
         }
     }
 }
