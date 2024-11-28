@@ -121,6 +121,8 @@ void Board::display() const {
                 std::cout << 'S';
             } else if (cell->getLink()) {
                 std::cout << cell->getLink()->getId();
+            } else if (cell->isCellBlocked()) {
+                std::cout << 'X';
             } else {
                 std::cout << '.';
             }

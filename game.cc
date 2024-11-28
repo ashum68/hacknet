@@ -122,6 +122,8 @@ void Game::run() {
     notifyObservers();  // Display initial board state
     
     while (!isGameOver()) {
+        // Reset the ability usage tracker at the start of the turn
+        
         Player* currentPlayer = players[currplayer].get();
         cout << "\nPlayer " << currentPlayer->getId() + 1 << "'s turn" << endl;
         cout << "Enter command (or 'help' for commands): ";
@@ -153,10 +155,10 @@ void Game::run() {
 void Game::processCommand(const std::string& cmd) {
     // Tokenize the input command
     std::vector<std::string> tokens = split(cmd);
+    bool abilityUsedThisTurn = false;
     
     if (tokens.empty()) {
         std::cout << "No command entered. Please try again." << std::endl;
-        // notifyObservers();
         return;
     }
     
@@ -236,6 +238,12 @@ void Game::processCommand(const std::string& cmd) {
         }
         
     } else if (command == "ability") {
+        // Check if an ability has already been used this turn
+        if (abilityUsedThisTurn) {
+            std::cout << "You have already used an ability this turn." << std::endl;
+            return;
+        }
+        
         // Command format: ability <ID> [additional parameters]
         if (tokens.size() < 2) {
             std::cout << "Invalid ability command format. Usage: ability <ID> [parameters]" << std::endl;
@@ -299,6 +307,9 @@ void Game::processCommand(const std::string& cmd) {
                 // For example:
                 // targetLink->enableBoost();
                 std::cout << "Ability 'Link Boost' used on link '" << linkStr << "'." << std::endl;
+                abilityUsedThisTurn = true; // Set the tracker
+                switchPlayer();
+                notifyObservers();
             } else {
                 std::cout << "Failed to use ability 'Link Boost' on link '" << linkStr << "'." << std::endl;
             }
@@ -336,6 +347,9 @@ void Game::processCommand(const std::string& cmd) {
             if (currentPlayer->useAbility(abilityID - 1, targetCell)) {
                 ability->use(targetCell);
                 std::cout << "Ability 'Firewall' used at (" << row << ", " << col << ")." << std::endl;
+                abilityUsedThisTurn = true; // Set the tracker
+                switchPlayer();
+                notifyObservers();
             } else {
                 std::cout << "Failed to use ability 'Firewall' at (" << row << ", " << col << ")." << std::endl;
             }
@@ -454,8 +468,10 @@ void Game::processCommand(const std::string& cmd) {
             }
             
             if (currentPlayer->useAbility(abilityID - 1, targetCell)) {
-                ability->use(targetCell);
-                std::cout << "Ability 'Road Work Ahead' used at (" << row << ", " << col << ")." << std::endl;
+                std::cout << "Ability 'Road Work Ahead' successfully blocked cell (" << row << ", " << col << ")." << std::endl;
+                notifyObservers();
+                abilityUsedThisTurn = true; // Set the tracker
+                switchPlayer();
             } else {
                 std::cout << "Failed to use ability 'Road Work Ahead' at (" << row << ", " << col << ")." << std::endl;
             }

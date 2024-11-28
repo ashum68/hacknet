@@ -2,6 +2,7 @@
 #define BOARD_H
 
 #include <vector>
+#include <memory>
 #include "cell.h"
 #include "observer.h"
 #include "direction.h"
