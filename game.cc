@@ -44,6 +44,8 @@ void Game::start() {
         cin >> numPlayers;
         if (numPlayers != 2 && numPlayers != 4) {
             cout << "Invalid number of players. Please enter 2 or 4." << endl;
+            cin.clear();
+            cin.ignore();
         }
     }
 
