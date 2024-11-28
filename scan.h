@@ -5,8 +5,8 @@ using namespace std;
 
 class Scan : public Ability {
     public:
-        Scan(char playerId);
-        void use(Cell *c) override;
+        Scan(Player *player);
+        bool use(Cell *c) override;
         string getName() const override;
 };
 

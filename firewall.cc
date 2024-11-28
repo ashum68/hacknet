@@ -1,12 +1,12 @@
 #include "firewall.h"
 using namespace std;
 
-Firewall::Firewall(int playerId) : Ability{playerId} {}
+Firewall::Firewall(Player *player) : Ability{player} {}
 
 // a link being "revealed" as its strength and type being revealed.
 
 bool Firewall::use(Cell *c) {
-    if (playerId == 1) {
+    if (player->getId() == 0) {
         if (c->isFirewallOn2()) return false;
         c->setFirewall2();
     } else {
@@ -16,4 +16,4 @@ bool Firewall::use(Cell *c) {
     return true;
 }
 
-string FireWall::getName() const { return "Firewall"; }
+string Firewall::getName() const { return "Firewall"; }

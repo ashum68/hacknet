@@ -5,7 +5,7 @@ using namespace std;
 
 class Polarize : public Ability {
     public:
-        Polarize(int playerId);
+        Polarize(Player *player);
         bool use(Cell *c) override;
         string getName() const override;
 };

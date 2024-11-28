@@ -5,7 +5,7 @@ using namespace std;
 
 class Firewall : public Ability {
     public:
-        Firewall(int playerId);
+        Firewall(Player *player);
         bool use(Cell *c) override;
         string getName() const override;
 };

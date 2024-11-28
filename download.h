@@ -5,7 +5,7 @@ using namespace std;
 
 class Download : public Ability {
     public:
-        Download(char playerId); // int?
+        Download(Player *player); 
         bool use(Cell *c) override;
         string getName() const override;
 };

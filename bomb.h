@@ -1,11 +1,11 @@
-#ifndef JUSTSAYNO_H
-#define JUSTSAYNO_H
+#ifndef BOMB_H
+#define BOMB_H
 #include "ability.h"
 using namespace std;
 
-class JustSayNo : public Ability {
+class Bomb : public Ability {
     public:
-        JustSayNo(int playerId);
+        Bomb(Player *player);
         bool use(Cell *c) override;
         string getName() const override;
 };

@@ -1,11 +1,10 @@
-#include "linkboost.h"
+#include "roulette.h"
 using namespace std;
 
-Roulette::Roulette(int playerId) : Ability{playerId} {}
+Roulette::Roulette(Player *player) : Ability{player} {}
 
 bool Roulette::use(Cell *c) {
-    
-
+    return;
 }
 
 string Roulette::getName() const { return "Roulette"; }

@@ -38,6 +38,8 @@ bool Player::downloadLink(int linkIndex) {
     }
 
     auto& link = links[linkIndex];
+    if (link->getDownloaded()) return false;
+
     link->setDownloaded();
 
     if (link->getIsVirus()) {
@@ -57,6 +59,10 @@ bool Player::hasLost() const {
     return downloadedViruses >= LOSING_VIRUSES;
 }
 
+int Player::getId() const {
+    return id;
+}
+
 std::string Player::getName() const {
     return "Player " + to_string(id + 1);
 }
@@ -65,8 +71,16 @@ int Player::getDownloadedData() const {
     return downloadedData;
 }
 
+void Player::incDownloadedData() {
+    downloadedData++;
+}
+
 int Player::getDownloadedViruses() const {
     return downloadedViruses;
+}
+
+void Player::incDownloadedViruses() {
+    downloadedViruses++;
 }
 
 const std::vector<std::unique_ptr<Ability>>& Player::getAbilities() const {

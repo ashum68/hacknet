@@ -22,12 +22,16 @@ public:
     void addAbility(unique_ptr<Ability> ability);
     bool useAbility(int abilityIndex, Cell* c);
     bool downloadLink(int linkIndex);
+    void removeLink(char linkId);
     bool hasWon() const;
     bool hasLost() const;
     
+    int getId() const;
     string getName() const;
     int getDownloadedData() const;
+    void incDownloadedData();
     int getDownloadedViruses() const;
+    void incDownloadedViruses();
     
     const vector<unique_ptr<Ability>>& getAbilities() const;
     const vector<unique_ptr<Link>>& getLinks() const;

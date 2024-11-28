@@ -6,10 +6,10 @@ using namespace std;
 
 class Ability {
     protected:
-        int playerId;
+        Player *player;
         bool isUsed = false;
     public:
-        Ability(int playerId);
+        Ability(Player *player);
         bool getUsed() const;
         void setUsed();
         virtual bool use(Cell* c) = 0;

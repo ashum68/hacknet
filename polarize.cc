@@ -1,9 +1,7 @@
 #include "polarize.h"
 using namespace std;
 
-Polarize::Polarize(int playerId) : Ability{playerId} {}
-
-// changes a targeted data to a virus of the same strength, or vice versa
+Polarize::Polarize(Player *player) : Ability{player} {}
 
 bool Polarize::use(Cell *c) {
     Link *link = c->getLink();
