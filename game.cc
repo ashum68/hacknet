@@ -106,9 +106,9 @@ void Game::start() {
     board = make_unique<Board>();
     board->initializeBoard(players);
     
-    // Reattach observer to new board
-    textObserver = new TextObserver(this);
-    attach(textObserver);
+    // // Reattach observer to new board
+    // textObserver = new TextObserver(this);
+    // attach(textObserver);
     
     currplayer = 0;
 }
@@ -119,8 +119,7 @@ void Game::run() {
     string command;
     cout << "\nWelcome to RAIInet!" << endl;
     cin.ignore();  // Clear the input buffer
-    
-    notifyObservers();  // Display board at the start
+    notifyObservers();  // Display initial board state
     
     while (!isGameOver()) {
         Player* currentPlayer = players[currplayer].get();
@@ -139,7 +138,6 @@ void Game::run() {
         }
         
         processCommand(command);
-        notifyObservers();  // Display board after each command
     }
     
     // Game over - announce winner
