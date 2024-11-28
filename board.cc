@@ -26,6 +26,12 @@ void Board::initializeBoard(const std::vector<std::unique_ptr<Player>>& players)
             targetCell->setLink(link.get());
         }
     }
+
+    grid[0][3]->setServerPort(1); 
+    grid[0][4]->setServerPort(1);
+    grid[7][3]->setServerPort(2);
+    grid[7][4]->setServerPort(2);
+
     notifyObservers();
 }
 
@@ -66,6 +72,16 @@ bool Board::moveLink(Link* link, Direction dir) {
 
     Cell* newCell = grid[newRow][newCol].get();
     if (newCell->canOccupy(link)) {
+        int opponentIndex = newCell->getLink()->getOwner();
+        Player* opponent = players[opponentIndex];
+        if (newCell->getServerPort()) {
+            link->getIsVirus() ? opponent->incDownloadedViruses() : opponent->incDownloadedData();
+            link->setDownloaded();
+            grid[row][col]->emptyCell();
+            grid[newRow][newCol]->emptyCell();
+            notifyObservers();
+            return true;
+        }
         if (newCell->getLink()) {
             bool battleResult = link->battle(newCell->getLink());
             if (battleResult) { // if you won - download what opponent has
@@ -77,8 +93,6 @@ bool Board::moveLink(Link* link, Direction dir) {
                 notifyObservers();
                 return true;
             } else { // if you LOST
-                int opponentIndex = newCell->getLink()->getOwner();
-                Player* opponent = players[opponentIndex];
                 link->getIsVirus() ? opponent->incDownloadedViruses() : opponent->incDownloadedData();
                 notifyObservers();
                 return true;

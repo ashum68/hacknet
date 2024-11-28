@@ -331,7 +331,7 @@ void Game::processCommand(const std::string& cmd) {
             // Prevent placing firewall on server ports or occupied cells
             Cell* targetCell = board->getCell(row, col);
             if (targetCell->isFirewallOn1() || targetCell->isFirewallOn2() ||
-                targetCell->getHasServerPort() || targetCell->getLink() != nullptr) {
+                targetCell->getServerPort() || targetCell->getLink() != nullptr) {
                 std::cout << "Cannot place Firewall on the specified cell." << std::endl;
                 return;
             }

@@ -5,9 +5,8 @@ class Link;  // Forward declaration
 
 class Cell {
     Link* link;
-    int row, col;
-    bool firewallOn1, firewallOn2;
-    bool hasServerPort;
+    int row, col, serverPort;
+    bool firewallOn1, firewallOn2;;
     bool isBlocked;
 
 public:
@@ -26,8 +25,8 @@ public:
     bool isFirewallOn2() const;
     void setFirewall1();
     void setFirewall2();
-    bool getHasServerPort() const;
-    void setHasServerPort(bool status);
-};
+    int getServerPort() const;
+    void setServerPort(int status);
 
+};
 #endif

@@ -2,14 +2,15 @@
 #include "link.h"
 
 Cell::Cell(Link* link, int row, int col) // default set all to false when created
-    : link(link), row(row), col(col),
+    : link(link), row(row), col(col), serverPort(0),
       firewallOn1(false), firewallOn2(false),
-      hasServerPort(false), isBlocked(false) {}
+      isBlocked(false) {}
 
 bool Cell::canOccupy(Link* incomingLink) const {
      // returns true if you CAN move into it
      // returns false if you CANNOT move
     if (isBlocked) return false;
+    if (incomingLink->getOwner() + 1 == serverPort) return false;
     if (this->link == nullptr) return true;
 
     if (incomingLink && this->link) {
@@ -66,10 +67,10 @@ void Cell::setFirewall2() {
     firewallOn2 = true;
 }
 
-bool Cell::getHasServerPort() const {
-    return hasServerPort;
+int Cell::getServerPort() const {
+    return serverPort;
 }
 
-void Cell::setHasServerPort(bool status) {
-    hasServerPort = status;
+void Cell::setServerPort(int status) {
+    serverPort = status;
 }
