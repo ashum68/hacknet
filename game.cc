@@ -137,11 +137,9 @@ void Game::run() {
         
         processCommand(command);
         
-        // Only display board after a valid move
-        // if (command.substr(0, 4) == "move") {
-        //     switchPlayer();
-        //     board->notifyObservers();
-        // }
+        if (command.substr(0, 4) == "move") {
+            board->notifyObservers();
+        }
     }
     
     // Game over - announce winner
@@ -536,7 +534,7 @@ bool Game::isGameOver() const {
 }
 
 void Game::switchPlayer() {
-    currplayer = (currplayer + 1) % players.size();
+    currplayer = currplayer == 0 ? 1 : 0;
     board->setCurrentPlayer(currplayer);
 }
 

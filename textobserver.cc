@@ -6,14 +6,9 @@ TextObserver::TextObserver(Board* board) : board{board} {}
 void TextObserver::notify() {
     displayBoard();
 }
-    
-char TextObserver::getLinkDisplay(const Link* link) const {
-    if (!link) return '.';
-    return link->getId();
-}
 
 void TextObserver::displayPlayerInfo(const Player* player, bool showLinks) const {
-    std::cout << "Player " << player->getId() + 1 << ":" << std::endl;
+    std::cout << std::endl << "Player " << player->getId() + 1 << ":" << std::endl;
     std::cout << "Downloaded: " << player->getDownloadedData() << "D, " 
               << player->getDownloadedViruses() << "V" << std::endl;
     
@@ -27,19 +22,23 @@ void TextObserver::displayPlayerInfo(const Player* player, bool showLinks) const
     if (player->getId() == 0) {  // Player 1
         for (char c = 'a'; c <= 'h'; ++c) {
             std::cout << c << ": ";
+            if (showLinks) {
             bool found = false;
             for (const auto& link : player->getLinks()) {
                 if (std::tolower(link->getId()) == c) {
                     if (!link->getDownloaded()) {
-                        std::cout << (link->getIsVirus() ? "V" : "D") 
-                                 << link->getStrength();
+                        std::cout << (link->getIsVirus() ? "V" : "D") << link->getStrength();
                     }
                     found = true;
                     break;
                 }
             }
             if (!found) std::cout << "  ";
-            if (c != 'h') std::cout << " ";
+            } else {
+                std::cout << "?";
+            }
+            if (c != 'h' && c!= 'd') std::cout << " ";
+            else std::cout << std::endl;
         }
     } else {  // Player 2
         for (char c = 'A'; c <= 'H'; ++c) {
@@ -60,10 +59,10 @@ void TextObserver::displayPlayerInfo(const Player* player, bool showLinks) const
             } else {
                 std::cout << "?";
             }
-            if (c != 'H') std::cout << " ";
+            if (c != 'H' && c != 'D') std::cout << " ";
+            else std::cout << std::endl;
         }
     }
-    std::cout << std::endl;
 }
 
 void TextObserver::displayBoard() const {
@@ -91,7 +90,7 @@ void TextObserver::displayBoard() const {
         std::cout << std::endl;
     }
     
-    std::cout << "========" << std::endl;
+    std::cout << "========";
     
     // Display Player 2's info and links (show if Player 2's turn, hide if Player 1's turn)
     displayPlayerInfo(players[1], board->getCurrPlayer() == 1);

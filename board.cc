@@ -78,7 +78,6 @@ bool Board::moveLink(Link* link, Direction dir) {
             link->setDownloaded();
             grid[row][col]->emptyCell();
             grid[newRow][newCol]->emptyCell();
-            notifyObservers();
             return true;
         }
         if (newCell->getLink()) {
@@ -91,11 +90,10 @@ bool Board::moveLink(Link* link, Direction dir) {
                 newCell->setLink(link);
                 link->setRow(newRow);
                 link->setCol(newCol);
-                notifyObservers();
                 return true;
             } else { // if you LOST
                 link->getIsVirus() ? opponent->incDownloadedViruses() : opponent->incDownloadedData();
-                notifyObservers();
+                grid[row][col]->emptyCell();
                 return true;
             }
         }
@@ -103,7 +101,6 @@ bool Board::moveLink(Link* link, Direction dir) {
         newCell->setLink(link);
         link->setRow(newRow);
         link->setCol(newCol);
-        notifyObservers();
         return true;
     }
     return false;
