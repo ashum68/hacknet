@@ -1,6 +1,8 @@
 #include "textobserver.h"
 #include <iostream>
 
+TextObserver::TextObserver(Game* game) : game{game} {}
+
 void TextObserver::notify() {
     displayBoard();
 }
@@ -14,8 +16,7 @@ void TextObserver::displayPlayerInfo(const unique_ptr<Player> player, bool isCur
     std::cout << "Player " << player->getId() + 1 << ":" << std::endl;
     std::cout << "Downloaded: " << player->getDownloadedData() << "D, " << player->getDownloadedViruses() << "V" << std::endl;
     int abilities = 0;
-
-    for (auto &a: player->getAbilities()) {
+    for (const auto &a: player->getAbilities()) {
         if (!a->getUsed()) {
             abilities++;
         }
@@ -27,13 +28,19 @@ void TextObserver::displayPlayerInfo(const unique_ptr<Player> player, bool isCur
         if (!link->getDownloaded()) {
             char id = link->getId();
             if (isCurrentPlayer || link->isRevealed()) {
-                std::cout << id << ": "  << (link->getIsVirus() ? "V" : "D") << link->getStrength() << (std::tolower(link->getId()) == 'd' || std::tolower(link->getId()) == 'h' ) ? std::endl : " ";
+                std::cout << (link->getIsVirus() ? "V" : "D") << link->getStrength();
             } else {
-                std::cout << id << ": ?" << (std::tolower(link->getId()) == 'd' || std::tolower(link->getId()) == 'h' ) ? std::endl : " ";
+                std::cout << "?";
+            }
+            
+            // Add space or newline
+            if (std::tolower(id) == 'd' || std::tolower(id) == 'h') {
+                std::cout << std::endl;
+            } else {
+                std::cout << " ";
             }
         }
     }
-    std::cout << std::endl;
 }
 
 void TextObserver::displayBoard() const {
@@ -46,7 +53,8 @@ void TextObserver::displayBoard() const {
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
             Cell* cell = game->getBoard()->getCell(i, j);
-            if ((i == 0 && (j == 3 || j == 4)) || (i == 7 && (j == 3 || j == 4))) {
+            if ((i == 0 && (j == 3 || j == 4)) || 
+                (i == 7 && (j == 3 || j == 4))) {
                 std::cout << 'S';
             } else if (cell->getLink()) {
                 std::cout << getLinkDisplay(cell->getLink());

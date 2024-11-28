@@ -6,7 +6,7 @@
 class TextObserver : public Observer {
     Game* game;
     public:
-        TextObserver(Game* game) : game(game) {}
+        TextObserver(Game* game);
         void notify() override;
         char getLinkDisplay(const Link* link) const;
         void displayPlayerInfo(const unique_ptr<Player> player, bool isCurrentPlayer) const;
