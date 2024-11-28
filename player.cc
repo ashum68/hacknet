@@ -63,10 +63,6 @@ int Player::getId() const {
     return id;
 }
 
-std::string Player::getName() const {
-    return "Player " + to_string(id + 1);
-}
-
 int Player::getDownloadedData() const {
     return downloadedData;
 }

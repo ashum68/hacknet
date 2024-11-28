@@ -29,6 +29,7 @@ public:
     int setRow(int r);
     int setCol(int c);
     char getOwner() const;
+    bool isRevealed() const;
 };
 
 #endif

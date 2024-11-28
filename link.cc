@@ -76,3 +76,7 @@ void Link::setVirus() {
 char Link::getOwner() const {
     return playerId;
 }
+
+bool Link::isRevealed() const {
+    return revealed;
+}

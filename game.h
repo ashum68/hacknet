@@ -31,6 +31,9 @@ class Game : public Subject {
         bool isGameOver() const;
         void switchPlayer();
         void initializePlayerAbilities(Player* player);
+        int getCurrPlayer() const;
+        unique_ptr<Player> getPlayer(int id) const;
+        unique_ptr<Board> getBoard() const;
 
 };
 
