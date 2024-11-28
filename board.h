@@ -12,7 +12,7 @@ class Board {
     std::vector<std::vector<std::unique_ptr<Cell>>> grid;
     std::vector<Observer*> observers;
     std::vector<Player*> players;
-    int currentPlayer = 0;  // Track current player
+    int currentPlayer = 0;
 
     public:
         Board();
