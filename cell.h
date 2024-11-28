@@ -13,7 +13,7 @@ class Cell {
 public:
     Cell(Link* link, int row, int col);
     
-    bool canOccupy(Link* link) const;
+    bool canOccupy(Link* incomingLink) const;
     void setLink(Link* newLink);
     Link* getLink() const;
     void emptyCell();
