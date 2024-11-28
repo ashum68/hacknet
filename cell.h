@@ -24,7 +24,7 @@ class Cell {
             
         // for abilities
         bool isCellBlocked() const;
-        void setBlocked(bool blocked);
+        void setBlocked();
         bool isFirewallOn1() const;
         bool isFirewallOn2() const;
         void setFirewall1();

@@ -33,8 +33,8 @@ bool Cell::isCellBlocked() const {
     return isBlocked;
 }
 
-void Cell::setBlocked(bool blocked) {
-    isBlocked = blocked;
+void Cell::setBlocked() {
+    isBlocked = true;
 }
 
 // Check if Firewall 1 is active
