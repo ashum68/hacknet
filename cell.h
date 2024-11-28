@@ -14,7 +14,7 @@ public:
     Cell(Link* link, int row, int col);
     
     bool canOccupy(Link* link) const;
-    void setLink(Link* link);
+    void setLink(Link* newLink);
     Link* getLink() const;
     void emptyCell();
     
