@@ -3,10 +3,15 @@
 
 #include <vector>
 #include <memory>
-#include "board.h"
+#include <map>
 #include "player.h"
 #include "ability.h"
 #include "subject.h"
+#include "board.h"
+#include "textobserver.h"
+
+// Forward declaration
+class Board;
 
 using namespace std;
 
@@ -14,6 +19,10 @@ class Game : public Subject {
     vector<unique_ptr<Player>> players;
     int currplayer;
     unique_ptr<Board> board;
+    map<string, int> abilityCount;
+    int abilitiesChosen = 0;
+    int choice;
+    unique_ptr<TextObserver> textObserver;
 
     private:
         static const int MAX_ABILITIES = 5;
@@ -21,6 +30,8 @@ class Game : public Subject {
         
         void displayAbilityMenu() const;
         bool isValidAbilityChoice(int choice) const;
+        vector<string> split(const string& str) const;
+        string toLower(const string& str) const;
 
     public:
         Game(vector<unique_ptr<Player>> players);
@@ -32,9 +43,9 @@ class Game : public Subject {
         void switchPlayer();
         void initializePlayerAbilities(Player* player);
         int getCurrPlayer() const;
-        unique_ptr<Player> getPlayer(int id) const;
-        unique_ptr<Board> getBoard() const;
-
+        Player* getPlayer(int id) const;
+        Board* getBoard() const;
+        void notifyObservers() override;
 };
 
 #endif

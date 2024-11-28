@@ -1,12 +1,15 @@
 #include "scan.h"
-using namespace std;
-
-// reveals the type and strength of any targeted link on the field. It does not reveal the player’s own links
+#include "player.h"
 
 Scan::Scan(Player *player) : Ability{player} {}
 
-void Scan::use(Cell *c) {
-    /* Impl */
+bool Scan::use(Cell *c) {
+    if (!c || !c->getLink()) return false;
+    
+    Link* targetLink = c->getLink();
+    targetLink->reveal();
+    
+    return true;
 }
 
 string Scan::getName() const { return "Scan"; }

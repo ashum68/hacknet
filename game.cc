@@ -11,29 +11,25 @@
 #include "firewall.h"
 #include "scan.h"
 #include "polarize.h"
-#include "justsayno.h"
 #include "roadworkahead.h"
 #include "roulette.h"
-#include "graphicsobserver.h"
+#include "bomb.h"
 #include "textobserver.h"
 #include <sstream>
 #include <fstream>
 #include <algorithm>
 
 using namespace std;
+using std::move;
 
-Game::Game(vector<unique_ptr<Player>> players) : players(move(players)), currplayer(0), board(make_unique<Board>()) {
-    // Initialize the board with players
-    board->initializeBoard(this->players);
-    
-    // Create only text observer
-    auto textObserver = make_unique<TextObserver>(board.get());
-    
-    // Attach observer to the board
+Game::Game(vector<unique_ptr<Player>> players) : 
+    players(std::move(players)), 
+    currplayer(0), 
+    board(make_unique<Board>()) 
+{
+    // Create text observer and store it as a member
+    textObserver = make_unique<TextObserver>(board.get());
     board->attach(textObserver.get());
-    
-    // Store observer
-    this->observers.push_back(move(textObserver));
 }
 
 void Game::start() {
@@ -48,11 +44,12 @@ void Game::start() {
         }
     }
 
-    players.resize(numPlayers);
+    // Clear any existing players
+    players.clear();
     
     // Initialize each player
     for (int i = 0; i < numPlayers; i++) {
-        auto player = make_unique<Player>(i);
+        auto player = std::make_unique<Player>(i);
         cout << "\nPlayer " << i + 1 << "'s turn to place links." << endl;
         
         // Track which positions are occupied
@@ -60,19 +57,19 @@ void Game::start() {
         
         // Place Data links (D1-D4)
         for (int j = 1; j <= 4; j++) {
-            cout << "Choose position (a-h) for D" << j << ": ";
+            i == 0 ? cout << "Choose position (a-h) for D" << j << ": " : cout << "Choose position (A-H) for D" << j << ": ";
             char pos;
             cin >> pos;
             
             // Validate input
             while (pos < 'a' || pos > 'h' || occupied[pos - 'a']) {
-                cout << "Invalid position. Please enter an unoccupied position (a-h): ";
+                i == 0 ? cout << "Invalid position. Please enter an unoccupied position (a-h): " : cout << "Choose position (A-H) for D" << j << ": ";
                 cin >> pos;
             }
             
             // Create and add Data link
-            auto newLink = make_unique<Link>(pos, i, j, false);
-            player->addLink(move(newLink));
+            auto newLink = std::make_unique<Link>(pos, i, j, false, (i == 0) ? ((j == 4) ? 1 : 0) : ((j == 4) ? 6 : 7), j - 1);
+            player->addLink(std::move(newLink));
             occupied[pos - 'a'] = true;
         }
         
@@ -89,17 +86,23 @@ void Game::start() {
             }
             
             // Create and add Virus link
-            auto newLink = make_unique<Link>(pos, i, j, true);
-            player->addLink(move(newLink));
+            auto newLink = std::make_unique<Link>(pos, i, j, true, (i == 0) ? ((j == 1) ? 1 : 0) : ((j == 1) ? 6 : 7), j + 4 - 1);
+            player->addLink(std::move(newLink));
             occupied[pos - 'a'] = true;
         }
         
         initializePlayerAbilities(player.get());
-        players.push_back(move(player));
+        players.push_back(std::move(player));
     }
     
-    // Initialize board state
+    // Reset board with new players
+    board = make_unique<Board>();
     board->initializeBoard(players);
+    
+    // Reattach observer to new board
+    textObserver = make_unique<TextObserver>(board.get());
+    board->attach(textObserver.get());
+    
     currplayer = 0;
 }
 
@@ -108,6 +111,9 @@ void Game::run() {
     
     string command;
     cout << "\nWelcome to RAIInet!" << endl;
+    cin.ignore();  // Add this line to clear the input buffer
+    
+    board->notifyObservers();  // Display board once at the start
     
     while (!isGameOver()) {
         Player* currentPlayer = players[currplayer].get();
@@ -121,16 +127,16 @@ void Game::run() {
             cout << "move <link> <direction> - Move a link (directions: up, down, left, right)" << endl;
             cout << "abilities - Display available abilities" << endl;
             cout << "ability <ID> [parameters] - Use an ability" << endl;
-            cout << "board - Display the game board" << endl;
             cout << "quit - Exit the game" << endl;
             continue;
         }
         
         processCommand(command);
         
-        // Switch to next player after a valid move
+        // Only display board after a valid move
         if (command.substr(0, 4) == "move") {
             switchPlayer();
+            board->notifyObservers();
         }
     }
     
@@ -150,6 +156,7 @@ void Game::processCommand(const std::string& cmd) {
     
     if (tokens.empty()) {
         std::cout << "No command entered. Please try again." << std::endl;
+        board->notifyObservers();
         return;
     }
     
@@ -269,7 +276,7 @@ void Game::processCommand(const std::string& cmd) {
                 return;
             }
             
-            char linkId = std::tolower(linkStr[0]);
+            [[maybe_unused]] char linkId = std::tolower(linkStr[0]);
             const auto& links = currentPlayer->getLinks();
             Link* targetLink = nullptr;
             
@@ -346,7 +353,7 @@ void Game::processCommand(const std::string& cmd) {
                 return;
             }
             
-            char linkId = std::tolower(linkStr[0]);
+            [[maybe_unused]] char linkId = std::tolower(linkStr[0]);
             // Find the opponent's link corresponding to linkId
             // Implementation depends on how links are identified across players
             // Example:
@@ -375,7 +382,7 @@ void Game::processCommand(const std::string& cmd) {
                 return;
             }
             
-            char linkId = std::tolower(linkStr[0]);
+            [[maybe_unused]] char linkId = std::tolower(linkStr[0]);
             // Find the link to scan (can be own or opponent's, based on game rules)
             // Example:
             // Link* targetLink = findLink(linkId);
@@ -403,7 +410,7 @@ void Game::processCommand(const std::string& cmd) {
                 return;
             }
             
-            char linkId = std::tolower(linkStr[0]);
+            [[maybe_unused]] char linkId = std::tolower(linkStr[0]);
             // Find the link to polarize (could be opponent's link based on game rules)
             // Example:
             // Link* targetLink = findLink(linkId);
@@ -415,25 +422,6 @@ void Game::processCommand(const std::string& cmd) {
             // }
             
             std::cout << "Ability 'Polarize' is not yet implemented." << std::endl;
-            
-        } else if (ability->getName() == "Just Say No") {
-            // Usage: ability <ID> <link>
-            if (tokens.size() != 3) {
-                std::cout << "Invalid usage of Just Say No. Usage: ability <ID> <link>" << std::endl;
-                return;
-            }
-            
-            std::string linkStr = tokens[2];
-            if (linkStr.length() != 1 || 
-                !((linkStr[0] >= 'a' && linkStr[0] <= 'h') || 
-                  (linkStr[0] >= 'A' && linkStr[0] <= 'H'))) {
-                std::cout << "Invalid link identifier. Must be a single letter (a-h or A-H)." << std::endl;
-                return;
-            }
-            
-            char linkId = std::tolower(linkStr[0]);
-            // Implement Just Say No logic
-            std::cout << "Ability 'Just Say No' is not yet implemented." << std::endl;
             
         } else if (ability->getName() == "Road Work Ahead") {
             // Usage: ability <ID> <row> <col>
@@ -485,7 +473,7 @@ void Game::processCommand(const std::string& cmd) {
                 return;
             }
             
-            char linkId = std::tolower(linkStr[0]);
+            [[maybe_unused]] char linkId = std::tolower(linkStr[0]);
             // Implement Roulette logic
             std::cout << "Ability 'Roulette' is not yet implemented." << std::endl;
             
@@ -544,13 +532,14 @@ bool Game::isGameOver() const {
 
 void Game::switchPlayer() {
     currplayer = (currplayer + 1) % players.size();
+    board->setCurrentPlayer(currplayer);
 }
 
 void Game::displayAbilityMenu() const {
     cout << "\nChoose abilities (max " << MAX_ABILITIES << " total, max " 
          << MAX_SAME_ABILITY << " of each type):\n";
-    cout << "1. Link Boost\n2. Firewall\n3. Download\n4. Scan\n"
-         << "5. Polarize\n6. Just Say No\n7. Road Work Ahead\n8. Roulette\n";
+    cout << "1. Link Boost\n2. Firewall\n3. Download\n4. Polarize\n"
+         << "5. Scan\n6. Bomb\n7. Road Work Ahead\n8. Roulette\n";
 }
 
 bool Game::isValidAbilityChoice(int choice) const {
@@ -558,69 +547,73 @@ bool Game::isValidAbilityChoice(int choice) const {
 }
 
 void Game::initializePlayerAbilities(Player* player) {
-    if (!player) return;
-    
-    std::map<std::string, int> abilityCount;
     int abilitiesChosen = 0;
-    
-    displayAbilityMenu();
+    const int MAX_ABILITIES = 5;  // Each player gets 5 abilities
+    const int MAX_SAME_ABILITY = 2;  // Maximum 2 of each type
+    std::map<std::string, int> abilityCount;
     
     while (abilitiesChosen < MAX_ABILITIES) {
-        std::cout << "\nChoose ability " << (abilitiesChosen + 1) << " of " << MAX_ABILITIES << ": ";
+        cout << "\nChoose ability " << abilitiesChosen + 1 << " for Player " << player->getId() + 1 << ":" << endl;
+        cout << "1. Link Boost\n2. Firewall\n3. Download\n4. Polarize\n"
+             << "5. Scan\n6. Bomb\n7. Road Work Ahead\n8. Roulette\n";
         
         int choice;
-        std::cin >> choice;
+        cin >> choice;
         
         if (!isValidAbilityChoice(choice)) {
-            std::cout << "Invalid choice. Please select 1-8.\n";
+            cout << "Invalid choice. Please select a number between 1 and 8." << endl;
             continue;
         }
         
         std::unique_ptr<Ability> newAbility;
+        string abilityName;
         
         switch (choice) {
             case 1:
-                newAbility = std::make_unique<LinkBoost>(player->getId());
+                newAbility = std::make_unique<LinkBoost>(player);
+                abilityName = "Link Boost";
                 break;
             case 2:
-                newAbility = std::make_unique<Firewall>(player->getId());
+                newAbility = std::make_unique<Firewall>(player);
+                abilityName = "Firewall";
                 break;
             case 3:
-                newAbility = std::make_unique<Download>(player->getId());
+                newAbility = std::make_unique<Download>(player);
+                abilityName = "Download";
                 break;
             case 4:
-                newAbility = std::make_unique<Scan>(player->getId());
+                newAbility = std::make_unique<Polarize>(player);
+                abilityName = "Polarize";
                 break;
             case 5:
-                newAbility = std::make_unique<Polarize>(player->getId());
+                newAbility = std::make_unique<Scan>(player);
+                abilityName = "Scan";
                 break;
             case 6:
-                newAbility = std::make_unique<JustSayNo>(player->getId());
+                newAbility = std::make_unique<Bomb>(player, board.get());
+                abilityName = "Bomb";
                 break;
             case 7:
-                newAbility = std::make_unique<RoadWorkAhead>(player->getId());
+                newAbility = std::make_unique<RoadWorkAhead>(player);
+                abilityName = "Road Work Ahead";
                 break;
             case 8:
-                newAbility = std::make_unique<Roulette>(player->getId());
+                newAbility = std::make_unique<Roulette>(player);
+                abilityName = "Roulette";
                 break;
             default:
-                std::cout << "Invalid choice. Please select a valid ability.\n";
+                cout << "Invalid choice. Please try again." << endl;
                 continue;
         }
         
-        if (!newAbility) {
-            std::cout << "Failed to create the selected ability.\n";
+        if (abilityCount[abilityName] >= MAX_SAME_ABILITY) {
+            cout << "Maximum count (" << MAX_SAME_ABILITY 
+                 << ") reached for " << abilityName << ". Choose another." << endl;
             continue;
         }
         
-        if (abilityCount[newAbility->getName()] >= MAX_SAME_ABILITY) {
-            std::cout << "Maximum count (" << MAX_SAME_ABILITY 
-                      << ") reached for " << newAbility->getName() << ". Choose another.\n";
-            continue;
-        }
-        
+        abilityCount[abilityName]++;
         player->addAbility(std::move(newAbility));
-        abilityCount[player->getAbilities().back()->getName()]++;
         abilitiesChosen++;
     }
 }
@@ -648,10 +641,16 @@ int Game::getCurrPlayer() const {
     return currplayer;
 }
 
-unique_ptr<Player> Game::getPlayer(int id) const {
-    return players[id];
+Player* Game::getPlayer(int id) const {
+    return players[id].get();
 }
 
-unique_ptr<Board> Game::getBoard() const {
-    return board;
+Board* Game::getBoard() const {
+    return board.get();
+}
+
+void Game::notifyObservers() {
+    for (auto observer : observers) {
+        observer->notify();
+    }
 }

@@ -1,17 +1,18 @@
 #ifndef SUBJECT_H
 #define SUBJECT_H
-#include <vector>
 
-class Observer; // forward declaration
+#include <vector>
+#include "observer.h"
 
 class Subject {
-  std::vector<Observer*> observers;
- public:
-  void attach( Observer* o ); // bool or void?
-  void detach( Observer* o );
-  void notifyObservers();
-  virtual char getState( int r, int c ) const = 0;
-  virtual ~Subject() = default;
+protected:
+    std::vector<Observer*> observers;
+
+public:
+    virtual void attach(Observer* o);
+    virtual void detach(Observer* o);
+    virtual void notifyObservers() = 0;
+    virtual ~Subject() = default;
 };
 
 #endif

@@ -1,4 +1,5 @@
 #include "firewall.h"
+#include "player.h"
 using namespace std;
 
 Firewall::Firewall(Player *player) : Ability{player} {}

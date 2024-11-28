@@ -1,13 +1,14 @@
-#ifndef _OBSERVER_H_
-#define _OBSERVER_H_
+#ifndef OBSERVER_H
+#define OBSERVER_H
 
-#include "game.h"
+class Subject;
+class Game;
 
 class Observer {
-    Game* game;
-    public:
-        virtual void notify() = 0;
-        virtual ~Observer() = default;
+    [[maybe_unused]] Game* game;
+public:
+    virtual void notify() = 0;
+    virtual ~Observer() = default;
 };
 
 #endif

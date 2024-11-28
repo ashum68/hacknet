@@ -8,15 +8,15 @@ Player::Player(int id)
     : id{id}, downloadedData{0}, downloadedViruses{0}, usedAbilityThisTurn{false} {}
 
 void Player::addLink(unique_ptr<Link> link) {
-    links.push_back(move(link));
+    links.push_back(std::move(link));
 }
 
 void Player::addAbility(unique_ptr<Ability> ability) {
-    abilities.push_back(move(ability));
+    abilities.push_back(std::move(ability));
 }
 
 bool Player::useAbility(int abilityIndex, Cell* c) {
-    if (abilityIndex < 0 || abilityIndex >= abilities.size() || !c) {
+    if (abilityIndex < 0 || abilityIndex >= abilities.size()) {
         return false;
     }
 

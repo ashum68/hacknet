@@ -1,12 +1,15 @@
 #include "linkboost.h"
+#include "link.h"
 using namespace std;
 
 LinkBoost::LinkBoost(Player *player) : Ability{player} {}
 
 bool LinkBoost::use(Cell *c) {
+    if (!c || !c->getLink()) return false;
+    
     Link *link = c->getLink();
-    if (!link) return false;
     link->addBoosted();
+    
     return true;
 }
 

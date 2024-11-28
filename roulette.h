@@ -1,5 +1,7 @@
 #ifndef ROULETTE_H
 #define ROULETTE_H
+#include <cstdlib>
+#include <ctime>
 #include "ability.h"
 using namespace std;
 

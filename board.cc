@@ -1,10 +1,10 @@
 #include "board.h"
-#include "direction.h"
 #include <iostream>
 
 Board::Board() {
-    grid.resize(8, std::vector<std::unique_ptr<Cell>>(8));
+    grid.resize(8);
     for (int i = 0; i < 8; i++) {
+        grid[i].resize(8);
         for (int j = 0; j < 8; j++) {
             grid[i][j] = std::make_unique<Cell>(nullptr, i, j);
         }
@@ -12,24 +12,20 @@ Board::Board() {
 }
 
 void Board::initializeBoard(const std::vector<std::unique_ptr<Player>>& players) {
+    this->players.clear();
     for (const auto& player : players) {
-        for (const auto& link : player->getLinks()) { // Assuming Player::getLinks() returns const std::vector<std::unique_ptr<Link>>&
+        this->players.push_back(player.get());
+    }
+    
+    for (const auto& player : players) {
+        for (const auto& link : player->getLinks()) {
             int row = link->getRow();
             int col = link->getCol();
-
             Cell* targetCell = grid[row][col].get();
             targetCell->setLink(link.get());
         }
     }
-}
-
-void Board::initializeBoard(vector<Player*> players) {
-    for (int i = 0; i < players.size(); i++) {
-        vector<Link*> links = players[i]->getLinks();
-        for (int j = 0; j < links.size(); j++) {
-            grid[links[j]->getRow()][links[j]->getCol()]->setLink(links[j]);
-        }
-    }
+    notifyObservers();
 }
 
 bool Board::moveLink(Link* link, Direction dir) {
@@ -73,6 +69,7 @@ bool Board::moveLink(Link* link, Direction dir) {
         newCell->setLink(link);
         link->setRow(newRow);
         link->setCol(newCol);
+        notifyObservers();
         return true;
     }
     return false;
@@ -80,4 +77,31 @@ bool Board::moveLink(Link* link, Direction dir) {
 
 Cell* Board::getCell(int row, int col) const {
     return grid[row][col].get();
+}
+
+void Board::attach(Observer* obs) {
+    observers.push_back(obs);
+}
+
+void Board::notifyObservers() {
+    for (auto observer : observers) {
+        observer->notify();
+    }
+}
+
+void Board::display() const {
+    for (int i = 0; i < getRows(); ++i) {
+        for (int j = 0; j < getCols(); ++j) {
+            Cell* cell = getCell(i, j);
+            if ((i == 0 && (j == 3 || j == 4)) || 
+                (i == 7 && (j == 3 || j == 4))) {
+                std::cout << 'S';
+            } else if (cell->getLink()) {
+                std::cout << cell->getLink()->getId();
+            } else {
+                std::cout << '.';
+            }
+        }
+        std::cout << std::endl;
+    }
 }

@@ -1,33 +1,40 @@
 #ifndef LINK_H
 #define LINK_H
 
-#include "player.h"
-#include "direction.h"
-
 class Link {
     char id;
-    int playerId, strength, row, col, boosted;
-    bool revealed, downloaded, isVirus;
+    int playerId;
+    int strength;
+    bool revealed;
+    int boosted;
+    bool downloaded;
+    bool isVirus;
+    int row;
+    int col;
 
 public:
-    Link(char id, int playerId, int strength, bool revealed = false, int boosted = 0, bool downloaded = false, bool isVirus);
+    Link(char id, int playerId, int strength, bool isVirus, int row, int col);
+    
     bool battle(Link* other);
     void reveal();
-
-    char getId() const;
-    bool getDownloaded() const;
-    void setDownloaded();
-    void addBoosted();
-    int getBoosted() const;
-    int getStrength() const;
+    
+    // Getters
     int getRow() const;
     int getCol() const;
+    char getId() const;
+    bool getDownloaded() const;
+    int getBoosted() const;
+    int getStrength() const;
     bool getIsVirus() const;
-    void setVirus();
-    int setRow(int r);
-    int setCol(int c);
     char getOwner() const;
     bool isRevealed() const;
+
+    // Setters
+    int setRow(int r);
+    int setCol(int c);
+    void setDownloaded();
+    void addBoosted();
+    void setVirus();
 };
 
 #endif
