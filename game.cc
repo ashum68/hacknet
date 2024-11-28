@@ -59,7 +59,8 @@ void Game::start() {
         for (int j = 1; j <= 4; j++) {
             i == 0 ? cout << "Choose position (a-h) for D" << j << ": " : cout << "Choose position (A-H) for D" << j << ": ";
             char pos;
-            cin >> pos;
+            cin >> pos; 
+            pos = tolower(pos);
             
             // Validate input
             while (pos < 'a' || pos > 'h' || occupied[pos - 'a']) {
@@ -68,7 +69,7 @@ void Game::start() {
             }
             
             // Create and add Data link
-            auto newLink = std::make_unique<Link>(pos, i, j, false, (i == 0) ? ((j == 4) ? 1 : 0) : ((j == 4) ? 6 : 7), j - 1);
+            auto newLink = std::make_unique<Link>(i == 1 ? toupper(pos) : pos, i, j, false, (i == 0) ? ((j == 4) ? 1 : 0) : ((j == 4) ? 6 : 7), j - 1);
             player->addLink(std::move(newLink));
             occupied[pos - 'a'] = true;
         }
