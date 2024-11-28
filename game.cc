@@ -643,3 +643,15 @@ std::string Game::toLower(const std::string& str) const {
                    [](unsigned char c){ return std::tolower(c); });
     return lowerStr;
 }
+
+int Game::getCurrPlayer() const {
+    return currplayer;
+}
+
+unique_ptr<Player> Game::getPlayer(int id) const {
+    return players[id];
+}
+
+unique_ptr<Board> Game::getBoard() const {
+    return board;
+}

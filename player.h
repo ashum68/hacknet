@@ -27,7 +27,10 @@ public:
     bool hasLost() const;
     
     int getId() const;
+<<<<<<< HEAD
     string getName() const;
+=======
+>>>>>>> 6c14ee1 (updated .h)
     int getDownloadedData() const;
     void incDownloadedData();
     int getDownloadedViruses() const;
