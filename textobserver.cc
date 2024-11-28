@@ -37,7 +37,7 @@ void TextObserver::displayPlayerInfo(const unique_ptr<Player> player, bool isCur
 }
 
 void TextObserver::displayBoard() const {
-    int currentPlayer = game->getCurrentPlayer();
+    int currentPlayer = game->getCurrPlayer();
     
     displayPlayerInfo(game->getPlayer(0), currentPlayer == 0);
     
