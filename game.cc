@@ -36,22 +36,37 @@ Game::~Game() {
 }
 
 void Game::start() {
-    cout << "How many players are playing, 2 or 4?" << endl;
+    cout << "How many players are playing, 2 or 4? ('quit' to exit): " << endl;
+    std::string inputLine;
     int numPlayers = 0;
 
     while (numPlayers != 2 && numPlayers != 4) {
         cout << "Enter number of players: ";
-        cin >> numPlayers;
+
+        if (!std::getline(cin, inputLine)) { // Handle EOF (Ctrl+D)
+            cout << "\nExiting." << endl;
+            exit(0);
+        }
+
+        else if (inputLine == "quit") {
+            cout << "Game has quit" << endl;
+            exit(0);
+        }
+
+        try {
+            numPlayers = std::stoi(inputLine);
+        } catch (const std::invalid_argument&) {
+            cout << "Invalid input. Please enter a number (2 or 4) or 'quit' to exit." << endl;
+            continue;
+        }
+
+        // Validate the number of players
         if (numPlayers != 2 && numPlayers != 4) {
             cout << "Invalid number of players. Please enter 2 or 4." << endl;
-            cin.clear();
-            cin.ignore();
         }
     }
 
-    // Clear any existing players
     players.clear();
-    
     // Initialize each player
     for (int i = 0; i < numPlayers; i++) {
         auto player = std::make_unique<Player>(i);
@@ -82,7 +97,7 @@ void Game::start() {
         
         // Place Virus links (V1-V4)
         for (int j = 1; j <= 4; j++) {
-            cout << "Choose position (a-h) for V" << j << ": ";
+            i == 0 ? cout << "Choose position (a-h) for V" << j << ": " : cout << "Choose position (A-H) for V" << j << ": ";
             char pos;
             cin >> pos;
             pos = tolower(pos);
@@ -513,11 +528,9 @@ void Game::processCommand(const std::string& cmd) {
         }
         
     } else if (command == "board") {
-        // Display the current state of the board
-        board->display(); // Assuming Board::display() handles POV
-        
+        board->display();
     } else if (command == "sequence") {
-        // Command format: sequence <file>
+        // sequence <file>
         if (tokens.size() != 2) {
             std::cout << "Invalid sequence command format. Usage: sequence <file>" << std::endl;
             return;
@@ -527,7 +540,7 @@ void Game::processCommand(const std::string& cmd) {
         std::ifstream infile(filename);
         
         if (!infile.is_open()) {
-            std::cout << "Failed to open sequence file: " << filename << std::endl;
+            std::cout << "Failed to open file " << filename << std::endl;
             return;
         }
         
@@ -542,9 +555,8 @@ void Game::processCommand(const std::string& cmd) {
         
         infile.close();
         
-    } else if (command == "quit" || command == "exit") {
-        // Exit the game
-        std::cout << "Exiting the game. Goodbye!" << std::endl;
+    } else if (command == "quit") {
+        std::cout << "Game has quit" << std::endl;
         exit(0);
 
     } else if (command == "op") {
@@ -597,7 +609,7 @@ void Game::processCommand(const std::string& cmd) {
         std::cout << std::endl;
     } else if (command == "sequence") {
         if (tokens.size() != 2) {
-            std::cout << "Invalid sequence command format. Usage: sequence <file>" << std::endl;
+            std::cout << "Invalid, use: sequence <file>" << std::endl;
             return;
         }
 
@@ -612,7 +624,7 @@ void Game::processCommand(const std::string& cmd) {
         }
         infile.close();
     } else {
-        std::cout << "Unknown command: " << tokens[0] << ". Please try again." << std::endl;
+        std::cout << "Unknown command: " << tokens[0] << ". Try again." << std::endl;
     }
 }
 
