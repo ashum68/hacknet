@@ -289,34 +289,16 @@ void Game::processCommand(const std::string& cmd) {
                 return;
             }
             
-            [[maybe_unused]] char linkId = std::tolower(linkStr[0]);
-            const auto& links = currentPlayer->getLinks();
-            Link* targetLink = nullptr;
-            
-            for (const auto& linkPtr : links) {
-                if (std::tolower(linkPtr->getId()) == linkId && !linkPtr->getDownloaded()) {
-                    targetLink = linkPtr.get();
-                    break;
-                }
-            }
-            
-            if (!targetLink) {
-                std::cout << "Link '" << linkStr << "' not found or already downloaded." << std::endl;
-                return;
-            }
-            
-            if (currentPlayer->useAbility(abilityID - 1, nullptr)) { // Assuming LinkBoost requires different handling
-                // Apply Link Boost effect here
-                // For example:
-                // targetLink->enableBoost();
+            int linkIndex = linkStr[0] - 'a';
+            Link* targetLink = players[currplayer]->getLinks()[linkIndex].get();
+            Cell* targetCell = board->getCell(targetLink->getRow(), targetLink->getCol());
+            if (currentPlayer->useAbility(abilityID - 1, targetCell)) {
                 std::cout << "Ability 'Link Boost' used on link '" << linkStr << "'." << std::endl;
-                abilityUsedThisTurn = true; // Set the tracker
-                switchPlayer();
+                abilityUsedThisTurn = true;
                 notifyObservers();
             } else {
                 std::cout << "Failed to use ability 'Link Boost' on link '" << linkStr << "'." << std::endl;
             }
-            
         } else if (ability->getName() == "Firewall") {
             // Usage: ability <ID> <row> <col>
             if (tokens.size() != 4) {
@@ -544,7 +526,7 @@ void Game::processCommand(const std::string& cmd) {
                 int strength = linkPtr->getStrength();
                 bool downloaded = linkPtr->getDownloaded();
                 std::cout << "  Link: " << linkId << " " << type << " " << strength 
-                          << " is downloaded: " << (downloaded ? "yes" : "no") << " is revealed: " << (linkPtr->isRevealed() ? "yes" : "no") << std::endl;
+                          << " is downloaded: " << (downloaded ? "yes" : "no") << " is revealed: " << (linkPtr->isRevealed() ? "yes" : "no") << " is boosted: " << linkPtr->getBoosted() << std::endl;
             }
             
             // Display Abilities

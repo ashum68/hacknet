@@ -47,16 +47,16 @@ bool Board::moveLink(Link* link, Direction dir) {
     
     switch (dir) {
         case Direction::UP:
-            newRow--;
+            newRow = (newRow - 1 - link->getBoosted());
             break;
         case Direction::DOWN:
-            newRow++;
+            newRow = (newRow + 1 + link->getBoosted());
             break;
         case Direction::LEFT:
-            newCol--;
+            newCol = (newCol - 1 - link->getBoosted());
             break;
         case Direction::RIGHT:
-            newCol++;
+            newCol = (newCol + 1 + link->getBoosted());
             break;
         default:
             std::cerr << "Error: Invalid direction provided for moving Link ID: " 
