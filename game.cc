@@ -741,10 +741,10 @@ std::vector<std::string> Game::split(const std::string& str) const {
 
 // convert string to lowercase by iterating
 std::string Game::toLower(const std::string& str) const {
-    std::string lowerStr = str;
-    std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(),
-                   [](unsigned char c){ return std::tolower(c); });
-    return lowerStr;
+    std::string output = str;
+    std::transform(output.begin(), output.end(), output.begin(),
+                   [](unsigned char c){ return std::output(c); });
+    return output;
 }
 
 int Game::getCurrPlayer() const {
