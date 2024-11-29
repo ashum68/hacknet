@@ -92,7 +92,7 @@ void TextObserver::displayBoard() const {
             if ((i == 0 && (j == 3 || j == 4)) || 
                 (i == 7 && (j == 3 || j == 4))) {
                 std::cout << 'S';
-            } else if (cell->getLink()) {
+            } else if (cell->getLink() && !cell->getLink()->getDownloaded()) {
                 std::cout << cell->getLink()->getId();
             } else if (cell->isCellBlocked()) {
                 std::cout << 'X';

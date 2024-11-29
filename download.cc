@@ -9,7 +9,11 @@ bool Download::use(Cell* cell) {
     Link* targetLink = cell->getLink();
     bool isVirus = targetLink->getIsVirus();
     
-    isVirus ? player->incDownloadedViruses() : player->incDownloadedData();
+    if (isVirus) {
+        player->incDownloadedViruses();
+    } else {
+        player->incDownloadedData();
+    }
     targetLink->setDownloaded();
     
     return true;

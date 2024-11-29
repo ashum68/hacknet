@@ -138,6 +138,7 @@ void Game::run() {
             cout << "abilities - Display available abilities" << endl;
             cout << "ability <ID> [parameters] - Use an ability" << endl;
             cout << "quit - Exit the game" << endl;
+            cout << "op - Display all game info" << endl;
             continue;
         }
         
@@ -369,20 +370,17 @@ void Game::processCommand(const std::string& cmd) {
                 std::cout << "Invalid link identifier. Must be a single letter (a-h or A-H)." << std::endl;
                 return;
             }
-            
-            [[maybe_unused]] char linkId = std::tolower(linkStr[0]);
-            // Find the opponent's link corresponding to linkId
-            // Implementation depends on how links are identified across players
-            // Example:
-            // Link* targetLink = findOpponentLink(linkId);
-            // if (targetLink) {
-            //     ability->use(targetLink);
-            //     std::cout << "Ability 'Download' used on link '" << linkStr << "'." << std::endl;
-            // } else {
-            //     std::cout << "Opponent's link '" << linkStr << "' not found." << std::endl;
-            // }
-            
-            std::cout << "Ability 'Download' is not yet implemented." << std::endl;
+
+            int linkIndex = linkStr[0] - 'a';
+            Link* targetLink = players[1 - currplayer]->getLinks()[linkIndex].get();
+            Cell* targetCell = board->getCell(targetLink->getRow(), targetLink->getCol());
+            if (currentPlayer->useAbility(abilityID - 1, targetCell)) {
+                std::cout << "Ability 'Download' used on link '" << linkStr << "'." << std::endl;
+                abilityUsedThisTurn = true; // Set the tracker
+                notifyObservers();
+            } else {
+                std::cout << "Failed to use ability 'Download' on link '" << linkStr << "'." << std::endl;
+            }
             
         } else if (ability->getName() == "Scan") {
             // Usage: ability <ID> <link>
