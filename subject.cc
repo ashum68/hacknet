@@ -1,12 +1,13 @@
 #include "subject.h"
 #include "observer.h"
+#include <memory>
 #include <vector>
 
-void Subject::attach( Observer* o ) {
-    observers.emplace_back(o);
+void Subject::attach(std::unique_ptr<Observer> o ) {
+    observers.push_back(std::move(o));
 }
 
-void Subject::detach( Observer* o ) {
+void Subject::detach(std::unique_ptr<Observer> o) {
     for (auto it = observers.begin(); it != observers.end(); ++it) {
         if (*it == o) {
             observers.erase(it);
@@ -16,8 +17,7 @@ void Subject::detach( Observer* o ) {
 }
 
 void Subject::notifyObservers() {
-    /*** FILL IN ***/
-    for (auto o : observers) {
+    for (const auto& o : observers) {
         o->notify();
     }
 }

@@ -3,24 +3,22 @@
 
 #include <vector>
 #include <memory>
-#include <string>
-#include "ability.h"
 #include "link.h"
-#include "cell.h"
+#include "ability.h"
 
 class Player {
     int id;
-    vector<unique_ptr<Link>> links;
-    vector<unique_ptr<Ability>> abilities;
+    std::vector<std::unique_ptr<Link>> links;
+    std::vector<std::unique_ptr<Ability>> abilities;
     int downloadedData, downloadedViruses;
     bool usedAbilityThisTurn;
 
 public:
     Player(int id);
     
-    void addLink(unique_ptr<Link> link);
-    void addAbility(unique_ptr<Ability> ability);
-    bool useAbility(int abilityIndex, Cell *c);
+    void addLink(std::unique_ptr<Link> link);
+    void addAbility(std::unique_ptr<Ability> ability);
+    bool useAbility(int abilityIndex, Cell* c = nullptr);
     bool downloadLink(int linkIndex);
     bool hasWon() const;
     bool hasLost() const;
@@ -31,8 +29,11 @@ public:
     int getDownloadedViruses() const;
     void incDownloadedViruses();
     
-    const vector<unique_ptr<Ability>>& getAbilities() const;
-    const vector<unique_ptr<Link>>& getLinks() const;
+    const std::vector<std::unique_ptr<Ability>>& getAbilities() const;
+    const std::vector<std::unique_ptr<Link>>& getLinks() const;
+    bool hasUsedAbilityThisTurn() const;
+    void setUsedAbilityThisTurn(bool used);
+    std::string getName() const;
 };
 
-#endif // PLAYER_H
+#endif

@@ -1,4 +1,5 @@
 #include "bomb.h"
+#include <iostream>
 using namespace std;
 
 Bomb::Bomb(Player *player, Board* board) : Ability{player}, board{board} {}
@@ -11,10 +12,11 @@ bool Bomb::use(Cell *c) {
             int new_row = row + dr; 
             int new_col = col + dc; 
 
-            if (new_row >= 0 && new_col >= 0 && new_row < board->getSize() && new_col < board->getSize()) {
-                Link *link = board->getCell(new_row, new_col)->getLink();
+            if (new_row >= 0 && new_col >= 0 && new_row < 8 && new_col < 8) {
+                Cell *cell = board->getCell(new_row, new_col);
+                Link *link = cell->getLink();
                 if (link) {
-                    link->setStrength(link->getStrength() - 1);
+                    link->decStrength();
                 } 
             }
         }

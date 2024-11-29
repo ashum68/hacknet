@@ -1,16 +1,20 @@
+#ifndef TEXTOBSERVER_H
+#define TEXTOBSERVER_H
 #include "observer.h"
+#include "board.h"
+#include "player.h"
 #include "game.h"
-#ifndef _TEXT_OBSERVER_H_
-#define _TEXT_OBSERVER_H_
+#include <memory>
 
 class TextObserver : public Observer {
     Game* game;
+    
     public:
         TextObserver(Game* game);
         void notify() override;
         char getLinkDisplay(const Link* link) const;
-        void displayPlayerInfo(const unique_ptr<Player> player, bool isCurrentPlayer) const;
         void displayBoard() const;
+        void displayPlayerInfo(const Player* player, bool showLinks) const;
 };
 
 #endif

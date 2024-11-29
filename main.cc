@@ -1,25 +1,26 @@
 #include "game.h"
-#include <iostream>
 #include <memory>
 #include <vector>
+#include <fstream>
+#include <iostream>
 
-int main() {
-    // Create vector to store players
-    vector<unique_ptr<Player>> players;
-    
-    // Create players (for a 2-player game)
-    players.push_back(make_unique<Player>(0));  // Player 1
-    players.push_back(make_unique<Player>(1));  // Player 2
-    
-    // Create and start the game
-    Game game(move(players));
-    
-    try {
-        game.run();
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-        return 1;
+int main(int argc, char* argv[]) {
+    bool graphics_enabled = false;
+
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "-graphics") {
+            graphics_enabled = true;
+        }
+        else {
+            std::cerr << "invalid" << std::endl;
+            return 1;
+        }
     }
-    
+    std::vector<std::unique_ptr<Player>> players;
+    players.push_back(std::make_unique<Player>(0));
+    players.push_back(std::make_unique<Player>(1));
+    Game game{std::move(players), graphics_enabled};
+    game.run();
     return 0;
-} 
+}

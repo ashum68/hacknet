@@ -1,4 +1,5 @@
 #include "player.h"
+#include <iostream>
 using namespace std;
 
 const int WINNING_DATA = 4;
@@ -8,24 +9,26 @@ Player::Player(int id)
     : id{id}, downloadedData{0}, downloadedViruses{0}, usedAbilityThisTurn{false} {}
 
 void Player::addLink(unique_ptr<Link> link) {
-    links.push_back(move(link));
+    links.push_back(std::move(link));
 }
 
 void Player::addAbility(unique_ptr<Ability> ability) {
-    abilities.push_back(move(ability));
+    abilities.push_back(std::move(ability));
 }
 
 bool Player::useAbility(int abilityIndex, Cell* c) {
-    if (abilityIndex < 0 || abilityIndex >= abilities.size() || !c) {
+    if (abilityIndex < 0 || abilityIndex >= abilities.size()) {
         return false;
     }
 
     auto& ability = abilities[abilityIndex];
+
     if (ability->getUsed()) {
         return false;
     }
 
     bool result = ability->use(c);
+
     if (result) {
         ability->setUsed();
     }
@@ -85,4 +88,16 @@ const std::vector<std::unique_ptr<Ability>>& Player::getAbilities() const {
 
 const std::vector<std::unique_ptr<Link>>& Player::getLinks() const {
     return links;
+}
+
+std::string Player::getName() const { 
+    return "Player " + std::to_string(id + 1); 
+}
+
+bool Player::hasUsedAbilityThisTurn() const {
+    return usedAbilityThisTurn;
+}
+
+void Player::setUsedAbilityThisTurn(bool used) {
+    usedAbilityThisTurn = used;
 }

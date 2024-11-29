@@ -1,14 +1,22 @@
 #include "download.h"
-using namespace std;
+#include "player.h"
 
-Download::Download(Player *player) : Ability{player} {}
+Download::Download(Player* player) : Ability{player} {}
 
-bool Download::use(Cell *c) {
-    Link *link = c->getLink();
-    if (!link) return false;
-    bool isVirus = link->getIsVirus();
-    link->setDownloaded();
-    isVirus ? player->incDownloadedViruses() : player->incDownloadedData();
+bool Download::use(Cell* cell) {
+    if (!cell || !cell->getLink()) return false;
+    
+    Link* targetLink = cell->getLink();
+    bool isVirus = targetLink->getIsVirus();
+    
+    if (isVirus) {
+        player->incDownloadedViruses();
+    } else {
+        player->incDownloadedData();
+    }
+    targetLink->setDownloaded();
+    
+    return true;
 }
 
 string Download::getName() const { return "Download"; }

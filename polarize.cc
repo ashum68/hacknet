@@ -1,11 +1,13 @@
 #include "polarize.h"
-using namespace std;
+#include "player.h"
+#include "link.h"
 
 Polarize::Polarize(Player *player) : Ability{player} {}
 
 bool Polarize::use(Cell *c) {
+    if (!c || !c->getLink()) return false;
+    
     Link *link = c->getLink();
-    if (!link) return false;
     link->setVirus();
     return true;
 }

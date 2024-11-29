@@ -1,5 +1,5 @@
-#ifndef ROULETTE_H
-#define ROULETTE_H
+#ifndef SCAN_H
+#define SCAN_H
 #include "ability.h"
 using namespace std;
 

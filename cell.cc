@@ -1,16 +1,29 @@
 #include "cell.h"
+#include "link.h"
 
 Cell::Cell(Link* link, int row, int col) // default set all to false when created
-    : link(link), row(row), col(col),
+    : link(link), row(row), col(col), serverPort(0),
       firewallOn1(false), firewallOn2(false),
-      hasServerPort(false), isBlocked(false) {}
+      isBlocked(false) {}
 
-bool Cell::canOccupy(Link* link) const {
-    return !isBlocked && link == nullptr;
+bool Cell::canOccupy(Link* incomingLink) const {
+     // returns true if you CAN move into it
+     // returns false if you CANNOT move
+    if (isBlocked) return false;
+    if (incomingLink->getOwner() + 1 == serverPort) return false;
+    if (this->link == nullptr) return true;
+
+    if (incomingLink && this->link) {
+        if (incomingLink->getOwner() == this->link->getOwner()) {
+            return false;
+        }
+        return true;
+    }
+    return false;
 }
 
-void Cell::setLink(Link* Link) {
-    link = Link;
+void Cell::setLink(Link* newLink) {
+    link = newLink;
 }
 
 int Cell::getRow() const {
@@ -33,36 +46,30 @@ bool Cell::isCellBlocked() const {
     return isBlocked;
 }
 
-void Cell::setBlocked() {
-    isBlocked = true;
+void Cell::setBlocked(bool blocked) {
+    isBlocked = blocked;
 }
 
-// Check if Firewall 1 is active
 bool Cell::isFirewallOn1() const {
     return firewallOn1;
 }
 
-// Check if Firewall 2 is active
 bool Cell::isFirewallOn2() const {
     return firewallOn2;
 }
 
-// Activate or deactivate Firewall 1
 void Cell::setFirewall1() {
     firewallOn1 = true;
 }
 
-// Activate or deactivate Firewall 2
 void Cell::setFirewall2() {
     firewallOn2 = true;
 }
 
-// Check if the cell has a server port
-bool Cell::getHasServerPort() const {
-    return hasServerPort;
+int Cell::getServerPort() const {
+    return serverPort;
 }
 
-// Set the server port status of the cell
-void Cell::setHasServerPort(bool status) {
-    hasServerPort = status;
+void Cell::setServerPort(int status) {
+    serverPort = status;
 }
