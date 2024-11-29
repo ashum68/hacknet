@@ -68,8 +68,8 @@ void Game::start() {
             pos = tolower(pos);
             
             // Validate input
-            while (pos < 'a' || pos > 'h' || occupied[pos - 'a']) {
-                i == 0 ? cout << "Invalid position. Please enter an unoccupied position (a-h): " : cout << "Choose position (A-H) for D" << j << ": ";
+            while ((pos < 'a' || pos > 'h' || occupied[pos - 'a'])) {
+                i == 0 ? cout << "Invalid position. Please enter an unoccupied position (a-h): " : cout << "Invalid position. Please enter an unoccupied position (A-H): ";
                 cin >> pos;
                 pos = tolower(pos);
             }
@@ -89,7 +89,7 @@ void Game::start() {
             
             // Validate input
             while (pos < 'a' || pos > 'h' || occupied[pos - 'a']) {
-                i == 0 ? cout << "Invalid position. Please enter an unoccupied position (a-h): " : cout << "Choose position (A-H) for V" << j << ": ";
+                i == 0 ? cout << "Invalid position. Please enter an unoccupied position (a-h): " : cout << "Invalid position. Please enter an unoccupied position (A-H): ";
                 cin >> pos;
                 pos = tolower(pos);
             }
@@ -127,14 +127,20 @@ void Game::run() {
             // Handle end of file or input error
             break;
         }
-        
-        // Skip empty lines
+
+        if (command == "quit") {
+            cout << "Game ended by player." << endl;
+            return;
+        }
+
         if (command.empty() || command.find_first_not_of(" \t\n\r") == string::npos) {
             continue;
         }
         
         if (command == "help") {
             cout << "\nAvailable commands:" << endl;
+            cout << "board - Displays the game board" << endl;
+            cout << "sequence <file> - Execute commands from a file" << endl;
             cout << "move <link> <direction> - Move a link (directions: up, down, left, right)" << endl;
             cout << "abilities - Display available abilities" << endl;
             cout << "ability <ID> [parameters] - Use an ability" << endl;
@@ -526,7 +532,7 @@ void Game::processCommand(const std::string& cmd) {
         
         std::string fileCmd;
         while (std::getline(infile, fileCmd)) {
-            std::cout << "Executing command: " << fileCmd << std::endl;
+            std::cout << "Command ran: " << fileCmd << std::endl;
             processCommand(fileCmd);
             if (isGameOver()) {
                 break;
@@ -540,7 +546,7 @@ void Game::processCommand(const std::string& cmd) {
         std::cout << "Exiting the game. Goodbye!" << std::endl;
         exit(0);
 
-    }     else if (command == "op") {
+    } else if (command == "op") {
         const auto& allPlayerInfo = board->getPlayers();
         for (const auto& playerInfo : allPlayerInfo) {
             std::cout << "Player " << playerInfo->getId() + 1 << " - " << playerInfo->getName() << std::endl;
@@ -588,6 +594,22 @@ void Game::processCommand(const std::string& cmd) {
             }
         }
         std::cout << std::endl;
+    } else if (command == "sequence") {
+        if (tokens.size() != 2) {
+            std::cout << "Invalid sequence command format. Usage: sequence <file>" << std::endl;
+            return;
+        }
+
+        std::string filename = tokens[1];
+        std::ifstream infile(filename);
+        std::string fileCommands;
+        while (std::getline(infile, fileCommands)) {
+            processCommand(fileCommands);
+            if (isGameOver()) {
+                break;
+            }
+        }
+        infile.close();
     } else {
         std::cout << "Unknown command: " << tokens[0] << ". Please try again." << std::endl;
     }
