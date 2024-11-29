@@ -350,7 +350,6 @@ void Game::processCommand(const std::string& cmd) {
                 ability->use(targetCell);
                 std::cout << "Ability 'Firewall' used at (" << row << ", " << col << ")." << std::endl;
                 abilityUsedThisTurn = true; // Set the tracker
-                switchPlayer();
                 notifyObservers();
             } else {
                 std::cout << "Failed to use ability 'Firewall' at (" << row << ", " << col << ")." << std::endl;
@@ -473,7 +472,6 @@ void Game::processCommand(const std::string& cmd) {
                 std::cout << "Ability 'Road Work Ahead' successfully blocked cell (" << row << ", " << col << ")." << std::endl;
                 notifyObservers();
                 abilityUsedThisTurn = true; // Set the tracker
-                switchPlayer();
             } else {
                 std::cout << "Failed to use ability 'Road Work Ahead' at (" << row << ", " << col << ")." << std::endl;
             }
@@ -548,7 +546,7 @@ void Game::processCommand(const std::string& cmd) {
                 int strength = linkPtr->getStrength();
                 bool downloaded = linkPtr->getDownloaded();
                 std::cout << "  Link: " << linkId << " " << type << " " << strength 
-                          << " is downloaded: " << (downloaded ? "yes" : "no") << std::endl;
+                          << " is downloaded: " << (downloaded ? "yes" : "no") << " is revealed: " << (linkPtr->isRevealed() ? "yes" : "no") << std::endl;
             }
             
             // Display Abilities

@@ -78,6 +78,7 @@ bool Board::moveLink(Link* link, Direction dir) {
             grid[newRow][newCol]->emptyCell();
             return true;
         }
+
         if (newCell->getLink()) {
             int opponentIndex = newCell->getLink()->getOwner();
             Player* opponent = players[opponentIndex];
@@ -88,11 +89,38 @@ bool Board::moveLink(Link* link, Direction dir) {
                 newCell->setLink(link);
                 link->setRow(newRow);
                 link->setCol(newCol);
+                if (newCell->isFirewallOn1() && currentPlayer == 0) {
+                    link->reveal();
+                    std::cout << "FIREWALL ON 1 AFTER BATTLE REVEALED" << std::endl;
+                } else if (newCell->isFirewallOn2() && currentPlayer == 1) {
+                    link->reveal();
+                    std::cout << "FIREWALL ON 2 AFTER BATTLE REVEALED" << std::endl;
+                }
                 return true;
             } else { // if you LOST
                 link->getIsVirus() ? opponent->incDownloadedViruses() : opponent->incDownloadedData();
                 grid[row][col]->emptyCell();
                 return true;
+            }
+        }
+        if (newCell->isFirewallOn1()) {
+            std::cout << "TEST FIREWALL ON 1" << std::endl;
+            if (!newCell->getLink()) { // Check if link exists
+                int opponentIndex = link->getOwner() ? 0 : 1;
+                if (opponentIndex == 1) {
+                    link->reveal();
+                    std::cout << link->getId() << " has been revealed" << std::endl;
+                }
+            }
+        } else if (newCell->isFirewallOn2()) {
+            std::cout << "TEST FIREWALL ON 2" << std::endl;
+            if (!newCell->getLink()) { // Check if link exists
+                int opponentIndex = link->getOwner() ? 0 : 1;
+                if (opponentIndex == 0) {
+                    link->reveal();
+                    std::cout << link->getId() << " has been revealed" << std::endl;
+                }
+
             }
         }
         grid[row][col]->emptyCell();
@@ -123,8 +151,10 @@ void Board::display() const {
                 std::cout << cell->getLink()->getId();
             } else if (cell->isCellBlocked()) {
                 std::cout << 'X';
-            } else if (cell->isFirewallOn1() || cell->isFirewallOn2()) {
-                std::cout << 'F';
+            } else if (cell->isFirewallOn1()) {
+                std::cout << 'y';
+            } else if (cell->isFirewallOn2()) {
+                std::cout << 'Y';
             } else {
                 std::cout << '.';
             }

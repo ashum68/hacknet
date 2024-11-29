@@ -1,6 +1,7 @@
 #include "textobserver.h"
 #include <iostream>
 #include <cctype>
+#include <string>
 
 TextObserver::TextObserver(Game* game) : game{game} {}
 
@@ -55,7 +56,7 @@ void TextObserver::displayPlayerInfo(const Player* player, bool showLinks) const
             }
             else {
                 // Link is hidden and not captured
-                std::cout << " ?";
+                std::cout << (targetLink->isRevealed() ? ((targetLink->getIsVirus() ? "V" : "D") + std::to_string(targetLink->getStrength())) : " ?");
             }
         }
         else {
@@ -95,6 +96,10 @@ void TextObserver::displayBoard() const {
                 std::cout << cell->getLink()->getId();
             } else if (cell->isCellBlocked()) {
                 std::cout << 'X';
+            } else if (cell->isFirewallOn1()) {
+                std::cout << 'y';
+            } else if (cell->isFirewallOn2()) {
+                std::cout << 'Y';
             } else {
                 std::cout << '.';
             }
