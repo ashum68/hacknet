@@ -362,7 +362,7 @@ void Game::processCommand(const std::string& cmd) {
             }
             
         } else if (ability->getName() == "Download") {
-            // Usage: ability <ID> <link>
+            // ability <ID> <link>
             if (tokens.size() != 3) {
                 std::cout << "Invalid usage of Download. Usage: ability <ID> <link>" << std::endl;
                 return;
@@ -739,7 +739,7 @@ std::vector<std::string> Game::split(const std::string& str) const {
     return tokens;
 }
 
-// Helper function to convert a string to lowercase
+// convert string to lowercase by iterating
 std::string Game::toLower(const std::string& str) const {
     std::string lowerStr = str;
     std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(),
