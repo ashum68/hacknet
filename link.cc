@@ -80,7 +80,7 @@ void Link::setVirus() {
     isVirus = !isVirus;
 }
 
-char Link::getOwner() const {
+int Link::getOwner() const {
     return playerId;
 }
 

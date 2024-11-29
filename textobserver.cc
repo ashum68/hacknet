@@ -28,7 +28,6 @@ void TextObserver::displayPlayerInfo(const Player* player, bool showLinks) const
     for (char c = startChar; c <= endChar; ++c) {
         std::cout << c << ": ";
         
-        // Find the corresponding link
         const Link* targetLink = nullptr;
         for (const auto& link : player->getLinks()) {
             if (isPlayerOne) {

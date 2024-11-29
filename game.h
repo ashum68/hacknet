@@ -21,7 +21,6 @@ class Game : public Subject {
     map<string, int> abilityCount;
     int abilitiesChosen = 0;
     int choice;
-    Observer* textObserver;  // Change to raw pointer
 
     private:
         static const int MAX_ABILITIES = 5;

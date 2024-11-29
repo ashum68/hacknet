@@ -26,7 +26,7 @@ public:
     int getBoosted() const;
     int getStrength() const;
     bool getIsVirus() const;
-    char getOwner() const;
+    int getOwner() const;
     bool isRevealed() const;
 
     // Setters

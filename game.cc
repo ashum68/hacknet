@@ -14,6 +14,7 @@
 #include "roadworkahead.h"
 #include "roulette.h"
 #include "bomb.h"
+#include "graphicsobserver.h"
 #include "textobserver.h"
 #include <sstream>
 #include <fstream>
@@ -25,14 +26,14 @@ using std::move;
 Game::Game(vector<unique_ptr<Player>> players) : 
     players(std::move(players)), 
     currplayer(0), 
-    board(make_unique<Board>()),
-    textObserver(new TextObserver(this)) 
+    board(make_unique<Board>())
 {
-    attach(textObserver);
+    attach(new TextObserver(this));
+    attach(new GraphicsObserver(this));
 }
 
 Game::~Game() {
-    detach(textObserver);
+    for (Observer* o : observers) detach(o);
 }
 
 void Game::start() {
@@ -473,9 +474,16 @@ void Game::processCommand(const std::string& cmd) {
                 return;
             }
             
-            [[maybe_unused]] char linkId = std::tolower(linkStr[0]);
-            // Implement Roulette logic
-            std::cout << "Ability 'Roulette' is not yet implemented." << std::endl;
+            int linkIndex = linkStr[0] - 'a';
+            Link* targetLink = players[1 - currplayer]->getLinks()[linkIndex].get();
+            Cell* targetCell = board->getCell(targetLink->getRow(), targetLink->getCol());
+            if (currentPlayer->useAbility(abilityID - 1, targetCell)) {
+                std::cout << "Ability 'Roulette' used on link '" << linkStr << "'." << std::endl;
+                currentPlayer->setUsedAbilityThisTurn(true);
+                notifyObservers();
+            } else {
+                std::cout << "Failed to use ability 'Roulette' on link '" << linkStr << "'." << std::endl;
+            }
             
         } else if (ability->getName() == "Bomb") {
             // ability <ID> <row> <col>

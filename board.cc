@@ -64,7 +64,13 @@ bool Board::moveLink(Link* link, Direction dir) {
             return false;
     }
 
-    if (newRow < 0 || newRow >= grid.size() || newCol < 0 || newCol >= grid[0].size()) {
+    if (newRow < 0 || newCol < 0 || newRow >= grid.size() || newCol >= grid[0].size()) {
+        if ((link->getOwner() == 1 && newRow < 0) || (link->getOwner() == 0 && newRow >= int(grid.size()))) {
+            link->setDownloaded();
+            grid[row][col]->emptyCell();
+            link->getIsVirus() ? players[link->getOwner()]->incDownloadedViruses() : players[link->getOwner()]->incDownloadedData();
+            return true;
+        }
         return false;
     }
 
