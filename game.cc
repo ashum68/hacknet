@@ -751,7 +751,7 @@ std::vector<std::string> Game::split(const std::string& str) const {
 std::string Game::toLower(const std::string& str) const {
     std::string output = str;
     std::transform(output.begin(), output.end(), output.begin(),
-                   [](unsigned char c){ return std::output(c); });
+                   [](unsigned char c){ return std::tolower(c); });
     return output;
 }
 
