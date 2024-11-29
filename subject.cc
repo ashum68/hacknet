@@ -16,7 +16,6 @@ void Subject::detach( Observer* o ) {
 }
 
 void Subject::notifyObservers() {
-    /*** FILL IN ***/
     for (auto o : observers) {
         o->notify();
     }

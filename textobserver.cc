@@ -20,7 +20,7 @@ void TextObserver::displayPlayerInfo(const Player* player, bool showLinks) const
     }
     std::cout << "Abilities: " << availableAbilities << std::endl;
     
-    // Determine the case based on player ID
+    // determine the letter case based on player
     bool isPlayerOne = player->getId() == 0;
     char startChar = isPlayerOne ? 'a' : 'A';
     char endChar = isPlayerOne ? 'h' : 'H';
@@ -45,27 +45,26 @@ void TextObserver::displayPlayerInfo(const Player* player, bool showLinks) const
         
         if (targetLink) {
             if (targetLink->getDownloaded()) {
-                // Link is captured
                 std::cout << "--";
             }
             else if (showLinks) {
-                // Link is revealed and not captured
+                // revealed but not captured
                 std::cout << (targetLink->getIsVirus() ? "V" : "D") 
                           << targetLink->getStrength();
             }
             else {
-                // Link is hidden and not captured
+                // not revealed and not captured
                 std::cout << (targetLink->isRevealed() ? 
                     (std::string(targetLink->getIsVirus() ? "V" : "D") + std::to_string(targetLink->getStrength())) 
                     : " ?");
             }
         }
         else {
-            // No link exists at this position
+            // no link
             std::cout << " ";
         }
         
-        // Formatting: add space or newline based on position
+        // formatting player link output
         if ((isPlayerOne && (c != 'h' && c != 'd')) || 
             (!isPlayerOne && (c != 'H' && c != 'D'))) {
             std::cout << " ";
@@ -81,12 +80,12 @@ void TextObserver::displayBoard() const {
     const auto& players = board->getPlayers();
     if (players.size() < 2) return;
     
-    // Display Player 1's info and links (show if Player 1's turn, hide if Player 2's turn)
+    // render player 1 info
     displayPlayerInfo(players[0], game->getCurrPlayer() == 0);
     
     std::cout << "========" << std::endl;
     
-    // Display board
+    // display board
     for (int i = 0; i < board->getRows(); ++i) {
         for (int j = 0; j < board->getCols(); ++j) {
             Cell* cell = board->getCell(i, j);
@@ -110,6 +109,6 @@ void TextObserver::displayBoard() const {
     
     std::cout << "========";
     
-    // Display Player 2's info and links (show if Player 2's turn, hide if Player 1's turn)
+    // render player 2 info
     displayPlayerInfo(players[1], game->getCurrPlayer() == 1);
 }

@@ -36,4 +36,4 @@ public:
     std::string getName() const;
 };
 
-#endif // PLAYER_H
+#endif
