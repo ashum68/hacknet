@@ -36,7 +36,7 @@ void Board::initializeBoard(const std::vector<std::unique_ptr<Player>>& players)
 bool Board::moveLink(Link* link, Direction dir) {
 
     if (!link) {
-        std::cerr << "Error: Attempted to move a null Link pointer.\n";
+        std::cerr << "Invalid link" << std::endl;
         return false;
     }
 
@@ -59,11 +59,11 @@ bool Board::moveLink(Link* link, Direction dir) {
             newCol = (newCol + 1 + link->getBoosted());
             break;
         default:
-            std::cerr << "Error: Invalid direction provided for moving Link ID: " 
-                      << link->getId() << ".\n";
+            std::cerr << "Invalid direction" << link->getId() << std::endl;
             return false;
     }
 
+    // moving off the board
     if (newRow < 0 || newCol < 0 || newRow >= grid.size() || newCol >= grid[0].size()) {
         if ((link->getOwner() == 1 && newRow < 0) || (link->getOwner() == 0 && newRow >= int(grid.size()))) {
             link->setDownloaded();
@@ -74,8 +74,11 @@ bool Board::moveLink(Link* link, Direction dir) {
         return false;
     }
 
+    // moving to a new cell
     Cell* newCell = grid[newRow][newCol].get();
     if (newCell->canOccupy(link)) {
+
+        // moving into server port
         if (newCell->getServerPort()) {
             Player* opponent = players[newCell->getServerPort() - 1];
             link->getIsVirus() ? opponent->incDownloadedViruses() : opponent->incDownloadedData();
@@ -85,6 +88,7 @@ bool Board::moveLink(Link* link, Direction dir) {
             return true;
         }
 
+        // battle
         if (newCell->getLink()) {
             int opponentIndex = newCell->getLink()->getOwner();
             Player* opponent = players[opponentIndex];
@@ -95,12 +99,13 @@ bool Board::moveLink(Link* link, Direction dir) {
                 newCell->setLink(link);
                 link->setRow(newRow);
                 link->setCol(newCol);
+                // battle within firewall
                 if (newCell->isFirewallOn1() && currentPlayer == 0) {
                     link->reveal();
-                    std::cout << "FIREWALL ON 1 AFTER BATTLE REVEALED" << std::endl;
+                    // std::cout << "FIREWALL ON 1 AFTER BATTLE REVEALED" << std::endl;
                 } else if (newCell->isFirewallOn2() && currentPlayer == 1) {
                     link->reveal();
-                    std::cout << "FIREWALL ON 2 AFTER BATTLE REVEALED" << std::endl;
+                    // std::cout << "FIREWALL ON 2 AFTER BATTLE REVEALED" << std::endl;
                 }
                 return true;
             } else { // if you LOST
@@ -109,6 +114,8 @@ bool Board::moveLink(Link* link, Direction dir) {
                 return true;
             }
         }
+
+        // moving into firewall
         if (newCell->isFirewallOn1()) {
             std::cout << "TEST FIREWALL ON 1" << std::endl;
             if (!newCell->getLink()) { // Check if link exists
@@ -134,24 +141,21 @@ bool Board::moveLink(Link* link, Direction dir) {
         link->setRow(newRow);
         link->setCol(newCol);
         return true;
+        // successful move
     }
     return false;
+    // else
 }
 
 Cell* Board::getCell(int row, int col) const {
     return grid[row][col].get();
 }
 
-// void Board::attach(Observer* obs) {
-//     observers.push_back(obs);
-// }
-
 void Board::display() const {
     for (int i = 0; i < getRows(); ++i) {
         for (int j = 0; j < getCols(); ++j) {
             Cell* cell = getCell(i, j);
-            if ((i == 0 && (j == 3 || j == 4)) || 
-                (i == 7 && (j == 3 || j == 4))) {
+            if ((i == 0 && (j == 3 || j == 4)) || (i == 7 && (j == 3 || j == 4))) {
                 std::cout << 'S';
             } else if (cell->getLink()) {
                 std::cout << cell->getLink()->getId();

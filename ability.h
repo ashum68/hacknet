@@ -3,7 +3,6 @@
 #include "cell.h"
 #include <string>
 
-// Forward declaration
 class Player;
 
 class Ability {

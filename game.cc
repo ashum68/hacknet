@@ -19,9 +19,7 @@
 #include <sstream>
 #include <fstream>
 #include <algorithm>
-
-using namespace std;
-using std::move;
+#include <utility>
 
 Game::Game(vector<unique_ptr<Player>> players) : 
     players(std::move(players)), 
@@ -29,7 +27,7 @@ Game::Game(vector<unique_ptr<Player>> players) :
     board(make_unique<Board>())
 {
     attach(new TextObserver(this));
-    attach(new GraphicsObserver(this));
+    attach(new GraphicsObserver(this)); // add flag
 }
 
 Game::~Game() {
@@ -44,7 +42,7 @@ void Game::start() {
     while (numPlayers != 2 && numPlayers != 4) {
         cout << "Enter number of players: ";
 
-        if (!std::getline(cin, inputLine)) { // Handle EOF (Ctrl+D)
+        if (!std::getline(cin, inputLine)) {
             cout << "\nExiting." << endl;
             exit(0);
         }
@@ -57,7 +55,7 @@ void Game::start() {
         try {
             numPlayers = std::stoi(inputLine);
         } catch (const std::invalid_argument&) {
-            cout << "Invalid input. Please enter a number (2 or 4) or 'quit' to exit." << endl;
+            cout << "Invalid, enter a number (2 or 4) or 'quit'." << endl;
             continue;
         }
 
@@ -68,6 +66,7 @@ void Game::start() {
     }
 
     players.clear();
+
     // Initialize each player
     for (int i = 0; i < numPlayers; i++) {
         auto player = std::make_unique<Player>(i);
@@ -76,14 +75,13 @@ void Game::start() {
         // Track which positions are occupied
         vector<bool> occupied = {false, false, false, false, false, false, false, false};
         
-        // Place Data links (D1-D4)
+        // data
         for (int j = 1; j <= 4; j++) {
             i == 0 ? cout << "Choose position (a-h) for D" << j << ": " : cout << "Choose position (A-H) for D" << j << ": ";
             char pos;
             cin >> pos; 
-            pos = tolower(pos);
+            pos = tolower(pos); // convert to lower for same functionality
             
-            // Validate input
             while ((pos < 'a' || pos > 'h' || occupied[pos - 'a'])) {
                 i == 0 ? cout << "Invalid position. Please enter an unoccupied position (a-h): " : cout << "Invalid position. Please enter an unoccupied position (A-H): ";
                 cin >> pos;
@@ -96,21 +94,19 @@ void Game::start() {
             occupied[pos - 'a'] = true;
         }
         
-        // Place Virus links (V1-V4)
+        // virus
         for (int j = 1; j <= 4; j++) {
             i == 0 ? cout << "Choose position (a-h) for V" << j << ": " : cout << "Choose position (A-H) for V" << j << ": ";
             char pos;
             cin >> pos;
             pos = tolower(pos);
             
-            // Validate input
             while (pos < 'a' || pos > 'h' || occupied[pos - 'a']) {
                 i == 0 ? cout << "Invalid position. Please enter an unoccupied position (a-h): " : cout << "Invalid position. Please enter an unoccupied position (A-H): ";
                 cin >> pos;
                 pos = tolower(pos);
             }
             
-            // Create and add Virus link
             auto newLink = std::make_unique<Link>(i == 1 ? toupper(pos) : pos, i, j, true, (i == 0) ? ((pos - 'a' == 3 || pos - 'a' == 4) ? 1 : 0) : ((pos - 'a' == 3 || pos - 'a' == 4) ? 6 : 7), pos - 'a');
             player->addLink(std::move(newLink));
             occupied[pos - 'a'] = true;
@@ -127,9 +123,11 @@ void Game::start() {
 }
 
 void Game::run() {
-    start();  // initialize player links and abilities
+    start(); // initial setup
     
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear cin buffer
+    std::string firstLine;
+    std::getline(std::cin, firstLine); // weird buffer
+
     string command;
     cout << "\nWelcome to RAIInet!" << endl;
     notifyObservers(); // initial display of board
@@ -147,10 +145,6 @@ void Game::run() {
             cout << "Game ended by player." << endl;
             return;
         }
-
-        if (command.empty() || command.find_first_not_of(" \t\n\r") == string::npos) {
-            continue;
-        }
         
         if (command == "help") {
             cout << "\nAvailable commands:" << endl;
@@ -160,7 +154,7 @@ void Game::run() {
             cout << "abilities - Display available abilities" << endl;
             cout << "ability <ID> [parameters] - Use an ability" << endl;
             cout << "quit - Exit the game" << endl;
-            cout << "op - Display all game info" << endl;
+            cout << "op - For debugging, display all game info" << endl;
             continue;
         }
         
@@ -185,11 +179,12 @@ void Game::processCommand(const std::string& cmd) {
         tokens.push_back(token);
     }
     
-    if (tokens.empty()) {
+    if (tokens.empty()) { // handle empty
         return;
     }
     
     // Convert command to lowercase for case-insensitive comparison
+
     std::string command = toLower(tokens[0]);
     
     if (command == "move") {
@@ -202,7 +197,7 @@ void Game::processCommand(const std::string& cmd) {
         std::string linkStr = tokens[1];
         std::string directionStr = toLower(tokens[2]);
         
-        // Validate link identifier (e.g., a-h or A-H)
+        // check if a-h or A-H, handles caps
         if (linkStr.length() != 1 || 
             !((linkStr[0] >= 'a' && linkStr[0] <= 'h') || 
               (linkStr[0] >= 'A' && linkStr[0] <= 'H'))) {
@@ -232,6 +227,7 @@ void Game::processCommand(const std::string& cmd) {
         const auto& links = currentPlayer->getLinks();
         Link* targetLink = nullptr;
         
+        // find the link we need to move
         for (const auto& linkPtr : links) {
             if (std::tolower(linkPtr->getId()) == linkId && !linkPtr->getDownloaded()) {
                 targetLink = linkPtr.get();
@@ -240,81 +236,77 @@ void Game::processCommand(const std::string& cmd) {
         }
         
         if (!targetLink) {
-            std::cout << "Link '" << linkStr << "' not found or already downloaded." << std::endl;
+            std::cout << "Link '" << linkStr << "' not found." << std::endl;
             return;
         }
         
-        // Attempt to move the link
+        // move the link, if successful
         if (board->moveLink(targetLink, dir)) {
             std::cout << "Moved link '" << linkStr << "' " << directionStr << "." << std::endl;
             currentPlayer->setUsedAbilityThisTurn(false);
             switchPlayer();
             notifyObservers();
-        } else {
-            std::cout << "Failed to move link '" << linkStr << "' " << directionStr << "." << std::endl;
+        } else { // if move failed
+            std::cout << "Failed to move link '" << linkStr << "' " << directionStr << "" << std::endl;
         }
         
-    } else if (command == "abilities") {
-        // Display the current player's abilities
+    } else if (command == "abilities") { // abilities menu
         Player* currentPlayer = players[currplayer].get();
         const auto& abilities = currentPlayer->getAbilities();
         
-        std::cout << "Abilities for " << currentPlayer->getName() << ":" << std::endl;
-        for (size_t i = 0; i < abilities.size(); ++i) {
-            std::cout << i + 1 << ". " << abilities[i]->getName()
-                      << " - " << (abilities[i]->getUsed() ? "Used" : "Available") << std::endl;
+        std::cout << currentPlayer->getName() << "'s abilities:" << std::endl;
+        for (int i = 0; i < abilities.size(); i++) {
+            std::cout << i + 1 << ". " << abilities[i]->getName()<< " - " << (abilities[i]->getUsed() ? "Used" : "Available") << std::endl;
         }
         
     } else if (command == "ability") {
-        // Check if an ability has already been used this turn
         if (players[currplayer]->hasUsedAbilityThisTurn()) {
             std::cout << "You have already used an ability this turn." << std::endl;
             return;
         }
         
-        // Command format: ability <ID> [additional parameters]
-        if (tokens.size() < 2) {
+        // ability <ID> *params*
+        if (tokens.size() != 2 && tokens.size() != 3 && tokens.size() != 4) {
             std::cout << "Invalid ability command format. Usage: ability <ID> [parameters]" << std::endl;
             return;
         }
         
         int abilityID;
+        Player* currentPlayer = players[currplayer].get();
         try {
             abilityID = std::stoi(tokens[1]);
         } catch (const std::invalid_argument&) {
-            std::cout << "Invalid ability ID. Must be a number." << std::endl;
+            std::cout << "Choose a number for ability ID (1-5)" << std::endl;
             return;
         }
         
-        Player* currentPlayer = players[currplayer].get();
         if (abilityID < 1 || abilityID > currentPlayer->getAbilities().size()) {
-            std::cout << "Ability ID out of range. Please select a valid ability ID." << std::endl;
+            std::cout << "ID out of range" << std::endl;
             return;
         }
         
-        Ability* ability = currentPlayer->getAbilities()[abilityID - 1].get();
+        Ability* ability = currentPlayer->getAbilities()[abilityID - 1].get(); // get index of ID
         if (ability->getUsed()) {
-            std::cout << "Ability '" << ability->getName() << "' has already been used." << std::endl;
+            std::cout << "Ability '" << ability->getName() << "' has already been used" << std::endl;
             return;
         }
         
-        // Handle specific abilities that require additional parameters
         if (ability->getName() == "Link Boost") {
-            // Usage: ability <ID> <link>
+            // ability <ID> <link>
             if (tokens.size() != 3) {
-                std::cout << "Invalid usage of Link Boost. Usage: ability <ID> <link>" << std::endl;
+                std::cout << "Invalid usage of Link Boost (use ability <ID> <link>)" << std::endl;
                 return;
             }
             
             std::string linkStr = tokens[2];
             if (linkStr.length() != 1 || 
-                !((linkStr[0] >= 'a' && linkStr[0] <= 'h') || 
-                  (linkStr[0] >= 'A' && linkStr[0] <= 'H'))) {
-                std::cout << "Invalid link identifier. Must be a single letter (a-h or A-H)." << std::endl;
+                !((linkStr[0] >= 'a' && linkStr[0] <= 'h') || (linkStr[0] >= 'A' && linkStr[0] <= 'H'))) {
+                std::cout << "Invalid link (use a-h or A-H)" << std::endl;
                 return;
             }
             
-            int linkIndex = linkStr[0] - 'a';
+            int linkIndex = linkStr[0] - 'a'; // index of link
+
             Link* targetLink = players[currplayer]->getLinks()[linkIndex].get();
             Cell* targetCell = board->getCell(targetLink->getRow(), targetLink->getCol());
             if (currentPlayer->useAbility(abilityID - 1, targetCell)) {
@@ -322,12 +314,12 @@ void Game::processCommand(const std::string& cmd) {
                 currentPlayer->setUsedAbilityThisTurn(true);
                 notifyObservers();
             } else {
-                std::cout << "Failed to use ability 'Link Boost' on link '" << linkStr << "'." << std::endl;
+                std::cout << "Failed to use 'Link Boost' on '" << linkStr << "'." << std::endl;
             }
         } else if (ability->getName() == "Firewall") {
             // ability <ID> <row> <col>
             if (tokens.size() != 4) {
-                std::cout << "Invalid usage of Firewall. Usage: ability <ID> <row> <col>" << std::endl;
+                std::cout << "Invalid firewall usage (use ability <ID> <row> <col>)" << std::endl;
                 return;
             }
             
@@ -336,21 +328,19 @@ void Game::processCommand(const std::string& cmd) {
                 row = std::stoi(tokens[2]);
                 col = std::stoi(tokens[3]);
             } catch (const std::invalid_argument&) {
-                std::cout << "Invalid row or column. Must be integers." << std::endl;
+                std::cout << "row and col must be integers" << std::endl;
                 return;
             }
             
-            // Validate board coordinates
             if (row < 0 || row >= board->getRows() || col < 0 || col >= board->getCols()) {
-                std::cout << "Row or column out of bounds." << std::endl;
+                std::cout << "row and col must be within bounds" << std::endl;
                 return;
             }
             
-            // Prevent placing firewall on server ports or occupied cells
             Cell* targetCell = board->getCell(row, col);
             if (targetCell->isFirewallOn1() || targetCell->isFirewallOn2() ||
                 targetCell->getServerPort() || targetCell->getLink() != nullptr) {
-                std::cout << "Cannot place Firewall on the specified cell." << std::endl;
+                std::cout << "Firewalls cannot be placed in server ports or on links" << std::endl;
                 return;
             }
             
@@ -365,15 +355,14 @@ void Game::processCommand(const std::string& cmd) {
         } else if (ability->getName() == "Download") {
             // ability <ID> <link>
             if (tokens.size() != 3) {
-                std::cout << "Invalid usage of Download. Usage: ability <ID> <link>" << std::endl;
+                std::cout << "Invalid usage of download (use ability <ID> <link>)" << std::endl;
                 return;
             }
             
             std::string linkStr = tokens[2];
             if (linkStr.length() != 1 || 
-                !((linkStr[0] >= 'a' && linkStr[0] <= 'h') || 
-                  (linkStr[0] >= 'A' && linkStr[0] <= 'H'))) {
-                std::cout << "Invalid link identifier. Must be a single letter (a-h or A-H)." << std::endl;
+                !((linkStr[0] >= 'a' && linkStr[0] <= 'h') || (linkStr[0] >= 'A' && linkStr[0] <= 'H'))) {
+                std::cout << "Invalid link (use a-h or A-H)" << std::endl;
                 return;
             }
 
@@ -389,17 +378,16 @@ void Game::processCommand(const std::string& cmd) {
             }
             
         } else if (ability->getName() == "Scan") {
-            // Usage: ability <ID> <link>
+            // ability <ID> <link>
             if (tokens.size() != 3) {
-                std::cout << "Invalid usage of Scan. Usage: ability <ID> <link>" << std::endl;
+                std::cout << "Invalid usage of Scan (use ability <ID> <link>)" << std::endl;
                 return;
             }
             
             std::string linkStr = tokens[2];
             if (linkStr.length() != 1 || 
-                !((linkStr[0] >= 'a' && linkStr[0] <= 'h') || 
-                  (linkStr[0] >= 'A' && linkStr[0] <= 'H'))) {
-                std::cout << "Invalid link identifier. Must be a single letter (a-h or A-H)." << std::endl;
+                !((linkStr[0] >= 'a' && linkStr[0] <= 'h') || (linkStr[0] >= 'A' && linkStr[0] <= 'H'))) {
+                std::cout << "Invalid link (use a-h or A-H)" << std::endl;
                 return;
             }
 
@@ -415,7 +403,7 @@ void Game::processCommand(const std::string& cmd) {
         } else if (ability->getName() == "Polarize") {
             // Usage: ability <ID> <link>
             if (tokens.size() != 3) {
-                std::cout << "Invalid usage of Polarize. Usage: ability <ID> <link>" << std::endl;
+                std::cout << "Invalid usage of Polarize (use ability <ID> <link>)" << std::endl;
                 return;
             }
             
@@ -423,7 +411,7 @@ void Game::processCommand(const std::string& cmd) {
             if (linkStr.length() != 1 || 
                 !((linkStr[0] >= 'a' && linkStr[0] <= 'h') || 
                   (linkStr[0] >= 'A' && linkStr[0] <= 'H'))) {
-                std::cout << "Invalid link identifier. Must be a single letter (a-h or A-H)." << std::endl;
+                std::cout << "Invalid link (use a-h or A-H)" << std::endl;
                 return;
             }
 
@@ -439,9 +427,9 @@ void Game::processCommand(const std::string& cmd) {
             }
 
         } else if (ability->getName() == "Road Work Ahead") {
-            // Usage: ability <ID> <row> <col>
+            // ability <ID> <row> <col>, marks X
             if (tokens.size() != 4) {
-                std::cout << "Invalid usage of Road Work Ahead. Usage: ability <ID> <row> <col>" << std::endl;
+                std::cout << "Invalid usage of Road Work Ahead (use ability <ID> <row> <col>)" << std::endl;
                 return;
             }
             
@@ -450,24 +438,24 @@ void Game::processCommand(const std::string& cmd) {
                 row = std::stoi(tokens[2]);
                 col = std::stoi(tokens[3]);
             } catch (const std::invalid_argument&) {
-                std::cout << "Invalid row or column. Must be integers." << std::endl;
+                std::cout << "row and col must be integers" << std::endl;
                 return;
             }
             
             // ensure within bounds
             if (row < 0 || row >= board->getRows() || col < 0 || col >= board->getCols()) {
-                std::cout << "Row or column out of bounds." << std::endl;
+                std::cout << "row and col must be within bounds" << std::endl;
                 return;
             }
             
             Cell* targetCell = board->getCell(row, col);
             if (targetCell->isCellBlocked()) {
-                std::cout << "Cell (" << row << ", " << col << ") is already blocked." << std::endl;
+                std::cout << "Cell (" << row << ", " << col << ") is already blocked" << std::endl;
                 return;
             }
             
             if (currentPlayer->useAbility(abilityID - 1, targetCell)) {
-                std::cout << "Ability 'Road Work Ahead' successfully blocked cell (" << row << ", " << col << ")." << std::endl;
+                std::cout << "Ability 'Road Work Ahead' blocked cell (" << row << ", " << col << ")." << std::endl;
                 currentPlayer->setUsedAbilityThisTurn(true);
                 notifyObservers();
             } else {
@@ -477,7 +465,7 @@ void Game::processCommand(const std::string& cmd) {
         } else if (ability->getName() == "Roulette") {
             // ability <ID> <link>
             if (tokens.size() != 3) {
-                std::cout << "Invalid usage of Roulette. Usage: ability <ID> <link>" << std::endl;
+                std::cout << "Invalid usage of Roulette (use ability <ID> <link>)" << std::endl;
                 return;
             }
             
@@ -485,7 +473,7 @@ void Game::processCommand(const std::string& cmd) {
             if (linkStr.length() != 1 || 
                 !((linkStr[0] >= 'a' && linkStr[0] <= 'h') || 
                   (linkStr[0] >= 'A' && linkStr[0] <= 'H'))) {
-                std::cout << "Invalid link identifier. Must be a single letter (a-h or A-H)." << std::endl;
+                std::cout << "Invalid link (use a-h or A-H)" << std::endl;
                 return;
             }
             
@@ -503,7 +491,7 @@ void Game::processCommand(const std::string& cmd) {
         } else if (ability->getName() == "Bomb") {
             // ability <ID> <row> <col>
             if (tokens.size() != 4) {
-                std::cout << "Invalid usage of Bomb. Usage: ability <ID> <row> <col>" << std::endl;
+                std::cout << "Invalid usage of Bomb (use ability <ID> <row> <col>)" << std::endl;
                 return;
             }
             
@@ -512,12 +500,12 @@ void Game::processCommand(const std::string& cmd) {
                 row = std::stoi(tokens[2]);
                 col = std::stoi(tokens[3]);
             } catch (const std::invalid_argument&) {
-                std::cout << "Invalid row or column. Must be integers." << std::endl;
+                std::cout << "row and col must be integers" << std::endl;
                 return;
             }
             
             if (row < 0 || row >= board->getRows() || col < 0 || col >= board->getCols()) {
-                std::cout << "Row or column out of bounds." << std::endl;
+                std::cout << "row and col must be within bounds" << std::endl;
                 return;
             }
             
@@ -540,7 +528,7 @@ void Game::processCommand(const std::string& cmd) {
     } else if (command == "sequence") {
         // sequence <file>
         if (tokens.size() != 2) {
-            std::cout << "Invalid sequence command format. Usage: sequence <file>" << std::endl;
+            std::cout << "Invalid sequence command (use sequence <file>)" << std::endl;
             return;
         }
         
@@ -548,14 +536,14 @@ void Game::processCommand(const std::string& cmd) {
         std::ifstream infile(filename);
         
         if (!infile.is_open()) {
-            std::cout << "Failed to open file " << filename << std::endl;
+            std::cout << "Cannot open file " << filename << std::endl;
             return;
         }
         
-        std::string fileCmd;
-        while (std::getline(infile, fileCmd)) {
-            std::cout << "Command ran: " << fileCmd << std::endl;
-            processCommand(fileCmd);
+        std::string fileCommands;
+        while (std::getline(infile, fileCommands)) {
+            std::cout << "Running command: " << fileCommands << std::endl;
+            processCommand(fileCommands);
             if (isGameOver()) {
                 break;
             }
@@ -570,7 +558,7 @@ void Game::processCommand(const std::string& cmd) {
     } else if (command == "op") {
         const auto& allPlayerInfo = board->getPlayers();
         for (const auto& playerInfo : allPlayerInfo) {
-            std::cout << "Player " << playerInfo->getId() + 1 << " - " << playerInfo->getName() << std::endl;
+            std::cout << "Player " << playerInfo->getId() + 1 << ": " << std::endl;
             
             // Display Links
             for (const auto& linkPtr : playerInfo->getLinks()) {
@@ -579,20 +567,22 @@ void Game::processCommand(const std::string& cmd) {
                 int strength = linkPtr->getStrength();
                 bool downloaded = linkPtr->getDownloaded();
                 std::cout << "  Link: " << linkId << " " << type << " " << strength 
-                          << " is downloaded: " << (downloaded ? "yes" : "no") << " is revealed: " << (linkPtr->isRevealed() ? "yes" : "no") << " is boosted: " << linkPtr->getBoosted() << std::endl;
+                          << " is downloaded: " << (downloaded ? "yes" : "no") << " is revealed: " 
+                          << (linkPtr->isRevealed() ? "yes" : "no") << " is boosted: " 
+                          << linkPtr->getBoosted() << std::endl;
             }
             
             // Display Abilities
             const auto& abilities = playerInfo->getAbilities();
             std::cout << "  Abilities:" << std::endl;
             for (const auto& ability : abilities) {
-                std::cout << "    " << ability->getName() 
+                std::cout << "\t" << ability->getName() 
                           << " - " << (ability->getUsed() ? "Used" : "Available") << std::endl;
             }
             std::cout << std::endl;
         }
 
-        // Display Blocked Cells
+        // blocked cells
         std::cout << "Blocked Cells:" << std::endl;
         for (int i = 0; i < board->getRows(); ++i) {
             for (int j = 0; j < board->getCols(); ++j) {
@@ -604,7 +594,7 @@ void Game::processCommand(const std::string& cmd) {
         }
         std::cout << std::endl;
 
-        // Display Firewalled Cells
+        // firewalled cells
         std::cout << "Firewalled Cells:" << std::endl;
         for (int i = 0; i < board->getRows(); ++i) {
             for (int j = 0; j < board->getCols(); ++j) {
@@ -632,7 +622,7 @@ void Game::processCommand(const std::string& cmd) {
         }
         infile.close();
     } else {
-        std::cout << "Unknown command: " << tokens[0] << ". Try again." << std::endl;
+        std::cout << "Invalid command: " << tokens[0] << std::endl;
     }
 }
 
@@ -651,31 +641,26 @@ void Game::switchPlayer() {
 }
 
 void Game::displayAbilityMenu() const {
-    cout << "\nChoose abilities (max " << MAX_ABILITIES << " total, max " 
-         << MAX_SAME_ABILITY << " of each type):\n";
-    cout << "1. Link Boost\n2. Firewall\n3. Download\n4. Polarize\n"
-         << "5. Scan\n6. Bomb\n7. Road Work Ahead\n8. Roulette\n";
+    cout << "\nChoose abilities (max " << MAX_ABILITIES << " total, max " << MAX_SAME_ABILITY << " of each type):" << endl;
+    cout << "1. Link Boost" << endl << "2. Firewall" << endl << "3. Download" << endl << "4. Polarize" << endl
+         << "5. Scan" << endl << "6. Bomb" << endl << "7. Road Work Ahead" << endl << "8. Roulette" << endl;
 }
 
-bool Game::isValidAbilityChoice(int choice) const {
-    return choice >= 1 && choice <= 8;
-}
 
 void Game::initializePlayerAbilities(Player* player) {
     int abilitiesChosen = 0;
-    const int MAX_ABILITIES = 5;  // Each player gets 5 abilities
-    const int MAX_SAME_ABILITY = 2;  // Maximum 2 of each type
+    // {ability name, count}
     std::map<std::string, int> abilityCount;
     
     while (abilitiesChosen < MAX_ABILITIES) {
         cout << "\nChoose ability " << abilitiesChosen + 1 << " for Player " << player->getId() + 1 << ":" << endl;
-        cout << "1. Link Boost\n2. Firewall\n3. Download\n4. Polarize\n"
-             << "5. Scan\n6. Bomb\n7. Road Work Ahead\n8. Roulette\n";
+        cout << "1. Link Boost" << endl << "2. Firewall" << endl << "3. Download" << endl << "4. Polarize" << endl
+             << "5. Scan" << endl << "6. Bomb" << endl << "7. Road Work Ahead" << endl << "8. Roulette" << endl;
         
         int choice;
         cin >> choice;
         
-        if (!isValidAbilityChoice(choice)) {
+        if (!(choice <= 8 && choice >= 1)) {
             cout << "Invalid choice. Please select a number between 1 and 8." << endl;
             cin.clear();
             cin.ignore();
@@ -724,8 +709,7 @@ void Game::initializePlayerAbilities(Player* player) {
         }
         
         if (abilityCount[abilityName] >= MAX_SAME_ABILITY) {
-            cout << "Maximum count (" << MAX_SAME_ABILITY 
-                 << ") reached for " << abilityName << ". Choose another." << endl;
+            cout << "Maximum count (" << MAX_SAME_ABILITY << ") for " << abilityName << ". Choose another ability" << endl;
             continue;
         }
         
@@ -735,7 +719,7 @@ void Game::initializePlayerAbilities(Player* player) {
     }
 }
 
-// Helper function to split a string into tokens based on whitespace
+// separate white spaces and tokenize
 std::vector<std::string> Game::split(const std::string& str) const {
     std::vector<std::string> tokens;
     std::istringstream iss(str);

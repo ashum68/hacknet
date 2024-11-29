@@ -25,8 +25,8 @@ public:
     bool isFirewallOn2() const;
     void setFirewall1();
     void setFirewall2();
-    int getServerPort() const;
+    int getServerPort() const; // int for player 1 vs 2
     void setServerPort(int status);
-
 };
+
 #endif

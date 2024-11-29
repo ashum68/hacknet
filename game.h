@@ -33,7 +33,7 @@ class Game : public Subject {
 
     public:
         Game(vector<unique_ptr<Player>> players);
-        ~Game();  // Add destructor declaration
+        ~Game();
         
         void start();
         void run();
@@ -45,9 +45,6 @@ class Game : public Subject {
         Player* getPlayer(int id) const;
         Board* getBoard() const;
         void notifyObservers() override;
-
-        // Helper function to find opponent's link by ID
-        Link* findOpponentLink(char linkId) const;
 };
 
 #endif

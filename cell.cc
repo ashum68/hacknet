@@ -19,7 +19,6 @@ bool Cell::canOccupy(Link* incomingLink) const {
         }
         return true;
     }
-    
     return false;
 }
 
