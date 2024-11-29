@@ -20,9 +20,6 @@ class Board {
         void initializeBoard(const std::vector<std::unique_ptr<Player>>& players);
         bool moveLink(Link* link, Direction dir);
         Cell* getCell(int row, int col) const;
-        void attach(Observer* obs);
-        void detach(Observer* obs);
-        void notifyObservers();
         int getRows() const { return grid.size(); }
         int getCols() const { return grid[0].size(); }
         void display() const;
