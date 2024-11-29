@@ -69,7 +69,7 @@ int Link::getStrength() const {
 }
 
 void Link::decStrength() {
-    strength--;
+    if (strength > 1) strength--;
 }
 
 bool Link::getIsVirus() const {
