@@ -32,7 +32,7 @@ public:
     
     const std::vector<std::unique_ptr<Ability>>& getAbilities() const;
     const std::vector<std::unique_ptr<Link>>& getLinks() const;
-    std::string getName() const { return "Player " + std::to_string(id); }
+    std::string getName() const;
 };
 
 #endif // PLAYER_H

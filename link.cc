@@ -68,6 +68,10 @@ int Link::getStrength() const {
     return strength;
 }
 
+void Link::decStrength() {
+    strength--;
+}
+
 bool Link::getIsVirus() const {
     return isVirus;
 }

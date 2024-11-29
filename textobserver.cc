@@ -56,7 +56,9 @@ void TextObserver::displayPlayerInfo(const Player* player, bool showLinks) const
             }
             else {
                 // Link is hidden and not captured
-                std::cout << (targetLink->isRevealed() ? ((targetLink->getIsVirus() ? "V" : "D") + std::to_string(targetLink->getStrength())) : " ?");
+                std::cout << (targetLink->isRevealed() ? 
+                    (std::string(targetLink->getIsVirus() ? "V" : "D") + std::to_string(targetLink->getStrength())) 
+                    : " ?");
             }
         }
         else {

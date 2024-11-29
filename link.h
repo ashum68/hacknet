@@ -34,6 +34,7 @@ public:
     int setCol(int c);
     void setDownloaded();
     void addBoosted();
+    void decStrength();
     void setVirus();
 };
 

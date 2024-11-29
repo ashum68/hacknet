@@ -104,13 +104,8 @@ void Game::start() {
         players.push_back(std::move(player));
     }
     
-    // Reset board with new players
-    board = make_unique<Board>();
+    // After all players and abilities are initialized, initialize the board with players
     board->initializeBoard(players);
-    
-    // // Reattach observer to new board
-    // textObserver = new TextObserver(this);
-    // attach(textObserver);
     
     currplayer = 0;
 }
@@ -120,17 +115,23 @@ void Game::run() {
     
     string command;
     cout << "\nWelcome to RAIInet!" << endl;
-    cin.ignore();  // Clear the input buffer
     notifyObservers();  // Display initial board state
     
     while (!isGameOver()) {
-        // Reset the ability usage tracker at the start of the turn
-        
         Player* currentPlayer = players[currplayer].get();
         cout << "\nPlayer " << currentPlayer->getId() + 1 << "'s turn" << endl;
         cout << "Enter command (or 'help' for commands): ";
         
-        getline(cin, command);
+        // Use getline to read the entire line
+        if (!getline(cin, command) || cin.eof()) {
+            // Handle end of file or input error
+            break;
+        }
+        
+        // Skip empty lines
+        if (command.empty() || command.find_first_not_of(" \t\n\r") == string::npos) {
+            continue;
+        }
         
         if (command == "help") {
             cout << "\nAvailable commands:" << endl;
@@ -330,7 +331,6 @@ void Game::processCommand(const std::string& cmd) {
             }
             
             if (currentPlayer->useAbility(abilityID - 1, targetCell)) {
-                ability->use(targetCell);
                 std::cout << "Ability 'Firewall' used at (" << row << ", " << col << ")." << std::endl;
                 abilityUsedThisTurn = true; // Set the tracker
                 notifyObservers();
@@ -378,20 +378,17 @@ void Game::processCommand(const std::string& cmd) {
                 std::cout << "Invalid link identifier. Must be a single letter (a-h or A-H)." << std::endl;
                 return;
             }
-            
-            [[maybe_unused]] char linkId = std::tolower(linkStr[0]);
-            // Find the link to scan (can be own or opponent's, based on game rules)
-            // Example:
-            // Link* targetLink = findLink(linkId);
-            // if (targetLink) {
-            //     ability->use(targetLink);
-            //     std::cout << "Ability 'Scan' used on link '" << linkStr << "'." << std::endl;
-            // } else {
-            //     std::cout << "Link '" << linkStr << "' not found." << std::endl;
-            // }
-            
-            std::cout << "Ability 'Scan' is not yet implemented." << std::endl;
-            
+
+            int linkIndex = linkStr[0] - 'a';
+            Link* targetLink = players[1 - currplayer]->getLinks()[linkIndex].get();
+            Cell* targetCell = board->getCell(targetLink->getRow(), targetLink->getCol());
+            if (currentPlayer->useAbility(abilityID - 1, targetCell)) {
+                std::cout << "Ability 'Scan' used on link '" << linkStr << "'." << std::endl;
+                abilityUsedThisTurn = true;
+                notifyObservers();
+            } else {
+                std::cout << "Link '" << linkStr << "' not found." << std::endl;
+            }
         } else if (ability->getName() == "Polarize") {
             // Usage: ability <ID> <link>
             if (tokens.size() != 3) {
@@ -406,20 +403,18 @@ void Game::processCommand(const std::string& cmd) {
                 std::cout << "Invalid link identifier. Must be a single letter (a-h or A-H)." << std::endl;
                 return;
             }
-            
-            [[maybe_unused]] char linkId = std::tolower(linkStr[0]);
-            // Find the link to polarize (could be opponent's link based on game rules)
-            // Example:
-            // Link* targetLink = findLink(linkId);
-            // if (targetLink) {
-            //     ability->use(targetLink);
-            //     std::cout << "Ability 'Polarize' used on link '" << linkStr << "'." << std::endl;
-            // } else {
-            //     std::cout << "Link '" << linkStr << "' not found." << std::endl;
-            // }
-            
-            std::cout << "Ability 'Polarize' is not yet implemented." << std::endl;
-            
+
+            int linkIndex = linkStr[0] - 'a';
+            Link* targetLink = players[1 - currplayer]->getLinks()[linkIndex].get();
+            Cell* targetCell = board->getCell(targetLink->getRow(), targetLink->getCol());
+            if (currentPlayer->useAbility(abilityID - 1, targetCell)) {
+                std::cout << "Ability 'Polarize' used n link '" << linkStr << "'." << std::endl;
+                abilityUsedThisTurn = true;
+                notifyObservers();
+            } else {
+                std::cout << "Failed to use ability 'Polarize' on link '" << linkStr << "'." << std::endl;
+            }
+
         } else if (ability->getName() == "Road Work Ahead") {
             // Usage: ability <ID> <row> <col>
             if (tokens.size() != 4) {
@@ -474,6 +469,37 @@ void Game::processCommand(const std::string& cmd) {
             [[maybe_unused]] char linkId = std::tolower(linkStr[0]);
             // Implement Roulette logic
             std::cout << "Ability 'Roulette' is not yet implemented." << std::endl;
+            
+        } else if (ability->getName() == "Bomb") {
+            // Usage: ability <ID> <row> <col>
+            if (tokens.size() != 4) {
+                std::cout << "Invalid usage of Bomb. Usage: ability <ID> <row> <col>" << std::endl;
+                return;
+            }
+            
+            int row, col;
+            try {
+                row = std::stoi(tokens[2]);
+                col = std::stoi(tokens[3]);
+            } catch (const std::invalid_argument&) {
+                std::cout << "Invalid row or column. Must be integers." << std::endl;
+                return;
+            }
+            
+            if (row < 0 || row >= board->getRows() || col < 0 || col >= board->getCols()) {
+                std::cout << "Row or column out of bounds." << std::endl;
+                return;
+            }
+            
+            Cell* targetCell = board->getCell(row, col);
+            if (currentPlayer->useAbility(abilityID - 1, targetCell)) {
+                std::cout << "Ability 'Bomb' used at (" << row << ", " << col << ")." << std::endl;
+                abilityUsedThisTurn = true; 
+                notifyObservers();
+            } else {
+                std::cout << "Failed to use ability 'Bomb' at (" << row << ", " << col << ")." << std::endl;
+            }
+            
             
         } else {
             std::cout << "Ability '" << ability->getName() << "' is not recognized." << std::endl;
@@ -671,7 +697,8 @@ std::vector<std::string> Game::split(const std::string& str) const {
     std::vector<std::string> tokens;
     std::istringstream iss(str);
     std::string token;
-    while (iss >> token) {
+    
+    while (iss >> std::ws && iss >> token) {
         tokens.push_back(token);
     }
     return tokens;

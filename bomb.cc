@@ -1,4 +1,5 @@
 #include "bomb.h"
+#include <iostream>
 using namespace std;
 
 Bomb::Bomb(Player *player, Board* board) : Ability{player}, board{board} {}
@@ -12,9 +13,10 @@ bool Bomb::use(Cell *c) {
             int new_col = col + dc; 
 
             if (new_row >= 0 && new_col >= 0 && new_row < 8 && new_col < 8) {
-                Link *link = board->getCell(new_row, new_col)->getLink();
+                Cell *cell = board->getCell(new_row, new_col);
+                Link *link = cell->getLink();
                 if (link) {
-                    board->getCell(new_row, new_col)->setLink(nullptr);
+                    link->decStrength();
                 } 
             }
         }
