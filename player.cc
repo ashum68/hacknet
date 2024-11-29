@@ -26,7 +26,7 @@ bool Player::useAbility(int abilityIndex, Cell* c) {
     if (ability->getUsed()) {
         return false;
     }
-    
+
     bool result = ability->use(c);
 
     if (result) {
@@ -92,4 +92,12 @@ const std::vector<std::unique_ptr<Link>>& Player::getLinks() const {
 
 std::string Player::getName() const { 
     return "Player " + std::to_string(id + 1); 
+}
+
+bool Player::hasUsedAbilityThisTurn() const {
+    return usedAbilityThisTurn;
+}
+
+void Player::setUsedAbilityThisTurn(bool used) {
+    usedAbilityThisTurn = used;
 }

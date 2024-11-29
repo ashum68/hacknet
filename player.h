@@ -32,6 +32,8 @@ public:
     
     const std::vector<std::unique_ptr<Ability>>& getAbilities() const;
     const std::vector<std::unique_ptr<Link>>& getLinks() const;
+    bool hasUsedAbilityThisTurn() const;
+    void setUsedAbilityThisTurn(bool used);
     std::string getName() const;
 };
 
