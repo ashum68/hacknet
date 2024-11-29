@@ -1,7 +1,7 @@
 #ifndef CELL_H
 #define CELL_H
 
-class Link;  // Forward declaration
+class Link;
 
 class Cell {
     Link* link;

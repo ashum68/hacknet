@@ -14,7 +14,6 @@ bool Firewall::use(Cell *c) {
         if (c->isFirewallOn1()) return false;
         c->setFirewall1();
     }
-    // std::cout << "this works" << std::endl;
     return true;
 }
 

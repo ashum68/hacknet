@@ -102,10 +102,8 @@ bool Board::moveLink(Link* link, Direction dir) {
                 // battle within firewall
                 if (newCell->isFirewallOn1() && currentPlayer == 0) {
                     link->reveal();
-                    // std::cout << "FIREWALL ON 1 AFTER BATTLE REVEALED" << std::endl;
                 } else if (newCell->isFirewallOn2() && currentPlayer == 1) {
                     link->reveal();
-                    // std::cout << "FIREWALL ON 2 AFTER BATTLE REVEALED" << std::endl;
                 }
                 return true;
             } else { // if you LOST

@@ -61,7 +61,6 @@ void Game::start() {
             continue;
         }
 
-        // Validate the number of players
         if (numPlayers != 2 && numPlayers != 4) {
             cout << "Invalid number of players. Please enter 2 or 4." << endl;
         }
@@ -74,7 +73,6 @@ void Game::start() {
         auto player = std::make_unique<Player>(i);
         cout << "\nPlayer " << i + 1 << "'s turn to place links." << endl;
         
-        // Track which positions are occupied
         vector<bool> occupied = {false, false, false, false, false, false, false, false};
         
         // data
@@ -90,7 +88,6 @@ void Game::start() {
                 pos = tolower(pos);
             }
             
-            // Create and add Data link
             auto newLink = std::make_unique<Link>(i == 1 ? toupper(pos) : pos, i, j, false, (i == 0) ? ((pos - 'a'== 3 || pos - 'a' == 4) ? 1 : 0) : ((pos - 'a' == 3 || pos - 'a' == 4) ? 6 : 7), pos - 'a');
             player->addLink(std::move(newLink));
             occupied[pos - 'a'] = true;
@@ -125,7 +122,7 @@ void Game::start() {
 }
 
 void Game::run() {
-    start(); // initial setup
+    start(); 
     
     std::string firstLine;
     std::getline(std::cin, firstLine); // weird buffer
@@ -185,7 +182,7 @@ void Game::processCommand(const std::string& cmd) {
         return;
     }
     
-    // Convert command to lowercase for case-insensitive comparison
+    // convert to lowercase for conversion
 
     std::string command = toLower(tokens[0]);
     
@@ -224,7 +221,7 @@ void Game::processCommand(const std::string& cmd) {
             return;
         }
         
-        // Find the link in the current player's links
+        // find the link in the current player's links
         Player* currentPlayer = players[currplayer].get();
         const auto& links = currentPlayer->getLinks();
         Link* targetLink = nullptr;
@@ -562,7 +559,7 @@ void Game::processCommand(const std::string& cmd) {
         for (const auto& playerInfo : allPlayerInfo) {
             std::cout << "Player " << playerInfo->getId() + 1 << ": " << std::endl;
             
-            // Display Links
+            // display Links
             for (const auto& linkPtr : playerInfo->getLinks()) {
                 char linkId = linkPtr->getId();
                 std::string type = linkPtr->getIsVirus() ? "V" : "D";
@@ -574,7 +571,7 @@ void Game::processCommand(const std::string& cmd) {
                           << linkPtr->getBoosted() << std::endl;
             }
             
-            // Display Abilities
+            // display Abilities
             const auto& abilities = playerInfo->getAbilities();
             std::cout << "  Abilities:" << std::endl;
             for (const auto& ability : abilities) {
