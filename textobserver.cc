@@ -93,13 +93,13 @@ void TextObserver::displayBoard() const {
                 (i == 7 && (j == 3 || j == 4))) {
                 std::cout << 'S';
             } else if (cell->getLink() && !cell->getLink()->getDownloaded()) {
-                std::cout << cell->getLink()->getId();
+                std::cout << cell->getLink()->getId(); 
             } else if (cell->isCellBlocked()) {
                 std::cout << 'X';
             } else if (cell->isFirewallOn1()) {
-                std::cout << 'y';
+                std::cout << 'w';
             } else if (cell->isFirewallOn2()) {
-                std::cout << 'Y';
+                std::cout << 'm';
             } else {
                 std::cout << '.';
             }
