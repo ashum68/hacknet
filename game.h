@@ -32,7 +32,7 @@ class Game : public Subject {
         string toLower(const string& str) const;
 
     public:
-        Game(vector<unique_ptr<Player>> players);
+        Game(vector<unique_ptr<Player>> players, bool graphics = false);
         ~Game();
         
         void start();

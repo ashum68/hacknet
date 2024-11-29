@@ -1,6 +1,5 @@
 #include "linkboost.h"
 #include "link.h"
-using namespace std;
 
 LinkBoost::LinkBoost(Player *player) : Ability{player} {}
 

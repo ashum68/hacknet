@@ -21,13 +21,15 @@
 #include <algorithm>
 #include <utility>
 
-Game::Game(vector<unique_ptr<Player>> players) : 
+Game::Game(vector<unique_ptr<Player>> players, bool graphics) : 
     players(std::move(players)), 
     currplayer(0), 
     board(make_unique<Board>())
 {
     attach(new TextObserver(this));
-    attach(new GraphicsObserver(this)); // add flag
+    if (graphics) {
+        attach(new GraphicsObserver(this));
+    }
 }
 
 Game::~Game() {

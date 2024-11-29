@@ -17,8 +17,8 @@ public:
     
     bool battle(Link* other);
     void reveal();
-    
-    // Getters
+
+    // getters
     int getRow() const;
     int getCol() const;
     char getId() const;
@@ -29,7 +29,7 @@ public:
     int getOwner() const;
     bool isRevealed() const;
 
-    // Setters
+    // setters
     int setRow(int r);
     int setCol(int c);
     void setDownloaded();
