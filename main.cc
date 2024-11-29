@@ -17,13 +17,10 @@ int main(int argc, char* argv[]) {
             return 1;
         }
     }
-
     std::vector<std::unique_ptr<Player>> players;
     players.push_back(std::make_unique<Player>(0));
     players.push_back(std::make_unique<Player>(1));
-
     Game game{std::move(players), graphics_enabled};
-
     game.run();
     return 0;
 }

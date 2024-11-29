@@ -136,7 +136,7 @@ void Game::run() {
     
     while (!isGameOver()) {
         Player* currentPlayer = players[currplayer].get();
-        cout << "\nPlayer " << currentPlayer->getId() + 1 << "'s turn" << endl;
+        cout << "\nPlayer " << currentPlayer->getId() + 1 << "'s turn: " << endl;
         cout << "Enter command (or 'help' for commands): ";
         
         if (!getline(cin, command) || cin.eof()) {
